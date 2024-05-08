@@ -27,6 +27,6 @@
       ]
     }
   },
-  "include": ["src"],
+  "include": ["src", "HttpUtils"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -11,6 +11,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useState} from "react";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {cn} from "@/lib/utils.ts";
+import { handleFetch } from "HttpUtils/HttpMethode";
 
 
 type LoginSchema = z.infer<typeof loginSchema>
@@ -24,10 +25,18 @@ export function LoginForm() {
 		}
 	})
 
-	const onSubmit = (data: LoginSchema) => {
-		console.log(data)
+	const onSubmit = async (data: LoginSchema) => {
+        try {
+            // Call handleFetch function to submit form data
+            const responseData = await handleFetch('/Auth/login', 'POST', data);
 
-	}
+            console.log('Response data:', responseData);
+            // Handle successful response
+        } catch (error) {
+            console.error('Error occurred:', error);
+            // Handle error response
+        }
+    };
 	
 	return (
 		<div>

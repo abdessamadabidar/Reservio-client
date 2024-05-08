@@ -9,7 +9,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {cn} from "@/lib/utils.ts";
-
+import { handleFetch } from "../../../HttpUtils/HttpMethode"
 
 type UserSchema = z.infer<typeof userSchema>
 
@@ -25,10 +25,18 @@ export function RegisterForm() {
 	})
 
 
-	const onSubmit = (data: UserSchema) => {
-		console.log(data)
+	const onSubmit = async (data: UserSchema) => {
+        try {
+            // Call handleFetch function to submit form data
+            const responseData = await handleFetch('/Auth/register', 'POST', data);
 
-	}
+            console.log('Response data:', responseData);
+            // Handle successful response
+        } catch (error) {
+            console.error('Error occurred:', error);
+            // Handle error response
+        }
+    };
 
 
 	return (
