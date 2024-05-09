@@ -1,3 +1,8 @@
+export interface Role {
+	Id?: string;
+	Name: string;
+}
+
 export interface IUser {
 	Id?: string;
 	FirstName: string;
@@ -9,7 +14,8 @@ export interface IUser {
 	CreatedAt?: Date;
 	UpdatedAt?: Date;
 	VerifiedAt?: Date | null;
-	DeletedAt?: Date;
+	Token?: string;
+	Roles?: Role[];
 }
 
 export interface INotification {

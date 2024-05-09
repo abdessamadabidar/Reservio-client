@@ -19,8 +19,12 @@ import Reservations from "@/pages/Admin/reservations.tsx";
 import Analytics from "@/pages/Admin/analytics.tsx";
 import Notifications from "@/pages/notifications.tsx";
 import CreateNewRoomPage from "@/pages/Admin/create-new-room-page.tsx";
+import {Provider} from "react-redux";
+import {store} from "@/state/store.ts";
+import {QueryClient, QueryClientProvider} from "react-query";
 
 
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
     {
@@ -92,9 +96,13 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <RouterProvider router={router} />
-          <Toaster />
-      </ThemeProvider>
+      <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+              <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+                  <RouterProvider router={router} />
+                  <Toaster />
+              </ThemeProvider>
+          </QueryClientProvider>
+      </Provider>
   </React.StrictMode>,
 )

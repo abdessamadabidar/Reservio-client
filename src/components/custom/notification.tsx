@@ -1,6 +1,6 @@
 import {cn} from "@/lib/utils.ts";
 
-import {useNotification} from "@/hooks/use-Notification.ts";
+import {useNotification} from "@/hooks/use-notification.ts";
 import {INotification} from "@/types/types.ts";
 
 

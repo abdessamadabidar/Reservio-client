@@ -5,15 +5,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {useForm} from "react-hook-form";
-import {z} from "zod";
-import {loginSchema} from "@/zod/login-schema.ts";
+import {LoginSchema, loginSchema} from "@/zod/login-schema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useState} from "react";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {cn} from "@/lib/utils.ts";
+import {useAuthentication} from "@/hooks/use-authentication.ts";
+import {toast} from "@/components/ui/use-toast.ts";
 
 
-type LoginSchema = z.infer<typeof loginSchema>
+
 export function LoginForm() {
 	const [passwordIsVisible, setPasswordIsVisible] = useState(false)
 
@@ -24,9 +25,23 @@ export function LoginForm() {
 		}
 	})
 
-	const onSubmit = (data: LoginSchema) => {
-		console.log(data)
 
+	const {login} = useAuthentication()
+
+	const onSubmit = (data: LoginSchema) => {
+		login(data).then(() => {
+			toast({
+				title: "Logged successfully",
+				description: "You have logged"
+			})
+
+		}).catch(() => {
+			toast({
+				title: "Error occurred",
+				description: "something wrong"
+			})
+
+		})
 	}
 	
 	return (

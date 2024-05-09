@@ -42,7 +42,7 @@ export default function CreateNewRoomForm() {
 	}
 
 	const [selectedEquipments, setSelectedEquipments] = useState<Set<IEquipment>>(new Set());
-
+		console.log(selectedEquipments)
 	return <Card className="px-5 md:w-[60%] lg:w-[50%] rounded-xl mx-auto">
 		<CardHeader className="px-0 md:px-6">
 			<CardTitle>Create new room</CardTitle>
