@@ -33,3 +33,5 @@ export const userSchema = z.object({
 		required_error: 'Password confirmation is required.'
 	}).min(8),
 })
+
+export type UserSchema = z.infer<typeof userSchema>

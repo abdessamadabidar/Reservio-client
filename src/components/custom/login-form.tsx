@@ -12,6 +12,7 @@ import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {cn} from "@/lib/utils.ts";
 import {useAuthentication} from "@/hooks/use-authentication.ts";
 import {toast} from "@/components/ui/use-toast.ts";
+import {Loader} from "@/components/custom/loader.tsx";
 
 
 
@@ -26,22 +27,36 @@ export function LoginForm() {
 	})
 
 
-	const {login} = useAuthentication()
+	const {login, isLoading} = useAuthentication()
 
 	const onSubmit = (data: LoginSchema) => {
 		login(data).then(() => {
 			toast({
-				title: "Logged successfully",
-				description: "You have logged"
+				title: "Sign up",
+				description: (
+					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100">You have logged in successfull</div>
+				),
+				className: "bg-green-500 border-0 text-slate-100"
 			})
 
-		}).catch(() => {
+		}).catch((error) => {
 			toast({
-				title: "Error occurred",
-				description: "something wrong"
+				title: "Sign in",
+				description: (
+					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100">{error.response.data}</div>
+				),
+				variant: "destructive",
+				className: "dark:bg-red-600"
 			})
 
 		})
+	}
+
+	if(isLoading) {
+		return <div className="absolute top-0 left-0 w-full h-screen bg-background">
+			<Loader />
+		</div>
+
 	}
 	
 	return (

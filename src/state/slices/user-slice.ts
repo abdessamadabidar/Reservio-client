@@ -22,6 +22,8 @@ const userSlice = createSlice({
 
 });
 
+export const isAuthenticated = (state: { userState: IUserSlice }) => state.userState.user !== null;
+
 
 export default userSlice.reducer;
 export const {setUser} = userSlice.actions;

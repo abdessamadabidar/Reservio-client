@@ -2,16 +2,20 @@ import {Link} from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {useState} from "react";
-import {z} from "zod";
-import {userSchema} from "@/zod/user-schema.ts";
+import {useEffect, useState} from "react";
+import {UserSchema, userSchema} from "@/zod/user-schema.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {cn} from "@/lib/utils.ts";
+import {useRegistration} from "@/hooks/use-registration.ts";
+import {toast} from "@/components/ui/use-toast.ts";
+import {Loader} from "@/components/custom/loader.tsx";
 
 
-type UserSchema = z.infer<typeof userSchema>
+
+
+
 
 export function RegisterForm() {
 	const [passwordIsVisible, setPasswordIsVisible] = useState(false)
@@ -21,12 +25,53 @@ export function RegisterForm() {
 
 	const userForm = useForm<UserSchema>({
 		resolver: zodResolver(userSchema),
-		mode: 'onSubmit'
+		mode: 'onSubmit',
+
 	})
 
 
+	const [password, setPassword] = useState<string>("");
+	const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
+	const computePasswordStrength = (Password: string) => {
+		let strengthIndicator = -1;
+
+		if (/[a-z]/.test(Password)) strengthIndicator++;
+		if (/[A-Z]/.test(Password)) strengthIndicator++;
+		if (/\d/.test(Password)) strengthIndicator++;
+		if (/[^a-zA-Z0-9]/.test(Password)) strengthIndicator++;
+
+		if (Password.length >= 16) strengthIndicator++;
+
+		return passwordStrengthStates[strengthIndicator];
+	};
+
+	const [passwordStrengthState, SetPasswordStrengthState] = useState<string>("");
+	const passwordStrengthStates : string[] = ["weak", "medium", "medium", "strong"];
+	
+	useEffect(() => {
+		SetPasswordStrengthState(computePasswordStrength(password))
+	}, [password!]);
+
+
+	const {register, isLoading} = useRegistration();
 	const onSubmit = (data: UserSchema) => {
-		console.log(data)
+		register(data).then(response => {
+			toast({
+				title: "Sign up",
+				description: (
+					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100">{response.data}</div>
+				),
+				className: "bg-green-500 border-0 text-slate-100"
+			})
+		})
+
+	}
+
+
+	if(isLoading) {
+		return <div className="absolute top-0 left-0 w-full h-screen bg-background">
+			<Loader />
+		</div>
 
 	}
 
@@ -99,9 +144,30 @@ export function RegisterForm() {
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 </svg>
                                             </Button>}
-											<Input {...field}  type={passwordIsVisible? "text" : "password"} className={cn("focus-visible:ring-primary")} />
+											<Input {...field}  type={passwordIsVisible? "text" : "password"} className={cn("focus-visible:ring-primary")} onChange={(event) => {
+												field.onChange(event.target.value);
+												setPassword(event.target.value)
+											}} />
 										</div>
 									</FormControl>
+									<div className="flex flex-nowrap items-center justify-center gap-x-1 px-1 mb-1">
+										<div className={`flex-1 h-1 rounded-full ${
+											passwordStrengthState === 'weak' ? 'bg-red-500' :
+												(passwordStrengthState === 'medium' ? 'bg-orange-500' :
+													(passwordStrengthState === 'strong' ? 'bg-green-500': 'bg-gray-200'))
+										}`} />
+										<div className={`flex-1 h-1 rounded-full ${
+											passwordStrengthState === 'weak' ? 'bg-gray-200' :
+												(passwordStrengthState === 'medium' ? 'bg-orange-500' :
+													(passwordStrengthState === 'strong' ? 'bg-green-500': 'bg-gray-200'))
+										}`} />
+										<div className={`flex-1 h-1 rounded-full ${
+											passwordStrengthState === 'weak' ? 'bg-gray-200' :
+												(passwordStrengthState === 'medium' ? 'bg-gray-200' :
+													(passwordStrengthState === 'strong' ? 'bg-green-500': 'bg-gray-200'))
+										}`} />
+									</div>
+									<p className="text-xs text-smooth-gray px-1 italic font-sans">{passwordStrengthState}</p>
 									<FormMessage className="text-xs font-medium" />
 								</FormItem>
 							)}
@@ -125,14 +191,17 @@ export function RegisterForm() {
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 </svg>
                                             </Button>}
-											<Input {...field} type={passwordConfirmationIsVisible? "text" : "password"} className={cn("focus-visible:ring-primary")} />
+											<Input {...field} type={passwordConfirmationIsVisible? "text" : "password"} className={cn("focus-visible:ring-primary", (password !== passwordConfirmation && passwordConfirmation !== "") && "focus-visible:ring-destructive")}  onChange={(event) => {
+												field.onChange(event.target.value);
+												setPasswordConfirmation(event.target.value)
+											}}/>
 										</div>
 									</FormControl>
 									<FormMessage className="text-xs font-medium" />
 								</FormItem>
 							)}
 						/>
-						<Button type="submit" className="w-full hover:bg-secondary dark:text-foreground mt-4">
+						<Button type="submit" className="w-full hover:bg-secondary dark:text-foreground mt-4" disabled={!userForm.formState.isValid}>
 							sign up
 						</Button>
 					</div>

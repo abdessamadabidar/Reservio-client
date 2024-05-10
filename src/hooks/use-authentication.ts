@@ -5,7 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/state/store.ts";
 import {useMutation, useQueryClient} from "react-query";
 import {useNavigate} from "react-router-dom";
-import {setUser} from "@/state/User/user-slice.ts";
+import {setUser} from "@/state/slices/user-slice.ts";
 
 
 
@@ -15,15 +15,17 @@ export const useAuthentication = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
-	const {mutateAsync: loginMutation} = useMutation({
+	const {mutateAsync: loginMutation, isLoading} = useMutation({
 		mutationFn: async (credentials : LoginSchema) => await AuthApi.signIn(credentials),
 		onSuccess: (response) => {
 			const loggedUser : IUser = response.data;
-			queryClient.invalidateQueries({ queryKey: ["user"] });
-			if (user == null) {
-				dispatch(setUser(loggedUser))
-				navigate("/")
-			}
+			queryClient.invalidateQueries({ queryKey: ["user"] }).then(() => {
+				if (user == null) {
+					dispatch(setUser(loggedUser))
+					navigate("/")
+				}
+			});
+
 		},
 		onError: (error) => {
 			console.log('react query on error', error);
@@ -39,5 +41,5 @@ export const useAuthentication = () => {
 		return await loginMutation(credentials)
 	}
 
-	return {login};
+	return {login, isLoading};
 }

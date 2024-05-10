@@ -6,6 +6,8 @@ interface Props {
 }
 
 export default function AuthenticationPage({form} : Props) {
+
+
 	return (
 		<div className="h-screen relative">
 			<div className="absolute p-5">
