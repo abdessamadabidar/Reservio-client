@@ -30,7 +30,7 @@ export function LoginForm() {
 	const {login, isLoading} = useAuthentication()
 
 	const onSubmit = (data: LoginSchema) => {
-		login(data).then(() => {
+		login(data).then((res) => {
 			toast({
 				title: "Sign up",
 				description: (

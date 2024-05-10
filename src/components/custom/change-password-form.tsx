@@ -1,30 +1,21 @@
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {Link, useLocation} from "react-router-dom";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {cn} from "@/lib/utils.ts";
 import {Button} from "@/components/ui/button.tsx";
-import {ResetPasswordSchema, passwordSchema} from "@/zod/password-schema.ts";
+import {PasswordSchema, passwordSchema} from "@/zod/password-schema.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {usePassword} from "@/hooks/use-password.ts";
-import {useForgotPassword} from "@/hooks/use-forgot-password.ts";
-import {toast} from "@/components/ui/use-toast.ts";
 
 
-export default function ResetPasswordForm() {
+export default function ChangePasswordForm() {
 
 
-	const location = useLocation();
-	const query = new URLSearchParams(location.search);
-	const token: string | null = query.get('token');
 
-
-	const resetPasswordForm = useForm<ResetPasswordSchema>({
+	const changePasswordForm = useForm<PasswordSchema>({
 		resolver: zodResolver(passwordSchema),
-		defaultValues: {
-			token: token
-		}
+		
 	})
 
 
@@ -39,51 +30,30 @@ export default function ResetPasswordForm() {
 	} = usePassword()
 
 
-	const {resetPassword} = useForgotPassword()
 
 
-	const onSubmit = (data: ResetPasswordSchema) => {
 
-		resetPassword(data).then(response => {
-			toast({
-				description: (
-					<div className="flex items-center gap-x-1.5">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-							<path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-						</svg>
-						{response.data}
-					</div>
-				),
-				className: "bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200 border-0",
-			})
-		}).catch(error => {
-			toast({
-				description: (
-					<div className="flex items-center gap-x-1.5">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-							<path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-						</svg>
-						{error.response.data}
-					</div>
-				),
-				className: "dark:text-red-600 border-0",
-				variant: "destructive"
-			})
-		})
+	const onSubmit = (data: PasswordSchema) => {
+		console.log(data);
 
 	}
 
 	return <Card className="rounded-2xl border-0 dark:border shadow space-y-2">
 		<CardHeader className="space-y-2">
-			<CardTitle className="text-foreground text-center">Reset password</CardTitle>
-			<CardDescription className="text-center">Remember your password? <Link to="/auth" className="text-primary font-semibold hover:underline" >Sign in here</Link></CardDescription>
+			<CardTitle className="text-foreground text-center md:text-start text-lg flex items-center gap-x-2">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+					<path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+				</svg>
+
+
+				Change your password</CardTitle>
 		</CardHeader>
 		<CardContent>
-			<Form {...resetPasswordForm}>
-				<form onSubmit={resetPasswordForm.handleSubmit(onSubmit)}>
+			<Form {...changePasswordForm}>
+				<form onSubmit={changePasswordForm.handleSubmit(onSubmit)}>
 					<div className="space-y-4">
 						<FormField
-							control={resetPasswordForm.control}
+							control={changePasswordForm.control}
 							name="password"
 							render={({ field }) => (
 								<FormItem className="flex-1">
@@ -112,7 +82,7 @@ export default function ResetPasswordForm() {
 							)}
 						/>
 						<FormField
-							control={resetPasswordForm.control}
+							control={changePasswordForm.control}
 							name="passwordConfirmation"
 							render={({ field }) => (
 								<FormItem className="flex-1">
@@ -140,8 +110,8 @@ export default function ResetPasswordForm() {
 								</FormItem>
 							)}
 						/>
-						<Button type="submit" className="w-full hover:bg-secondary dark:text-foreground">
-							Reset password
+						<Button type="submit" className="w-full md:w-fit hover:bg-secondary dark:text-foreground">
+							Chnage password
 						</Button>
 					</div>
 				</form>

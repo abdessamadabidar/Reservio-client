@@ -7,3 +7,5 @@ export const emailSchema = z.object({
 	}
 	).email().toLowerCase(),
 })
+
+export type EmailSchema = z.infer<typeof emailSchema>;

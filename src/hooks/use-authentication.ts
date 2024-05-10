@@ -18,12 +18,22 @@ export const useAuthentication = () => {
 	const {mutateAsync: loginMutation, isLoading} = useMutation({
 		mutationFn: async (credentials : LoginSchema) => await AuthApi.signIn(credentials),
 		onSuccess: (response) => {
-			const loggedUser : IUser = response.data;
+			const loggedUser = response.data;
+			const user : IUser = {
+				Id: loggedUser.id,
+				Email: loggedUser.email,
+				FirstName: loggedUser.firstName,
+				LastName: loggedUser.lastName,
+				Roles: [...loggedUser.roles],
+				IsActivated: loggedUser.isActivated,
+				IsApproved: loggedUser.isApproved,
+				Token: loggedUser.token
+			}
+
+
 			queryClient.invalidateQueries({ queryKey: ["user"] }).then(() => {
-				if (user == null) {
-					dispatch(setUser(loggedUser))
-					navigate("/")
-				}
+				dispatch(setUser(user))
+				navigate("/")
 			});
 
 		},

@@ -12,7 +12,7 @@ import ForgotPasswordPage from "@/pages/forgot-password-page.tsx";
 import ResetPasswordPage from "@/pages/reset-password-page.tsx";
 import RoomsPage from "@/pages/rooms-page.tsx";
 import {Users} from "@/pages/Admin/users.tsx";
-import AdminLayout from "@/layouts/admin-layout.tsx";
+import DefaultLayout from "@/layouts/default-layout.tsx";
 import Dashboard from "@/pages/Admin/dashboard.tsx";
 import Rooms from "@/pages/Admin/rooms.tsx";
 import Reservations from "@/pages/Admin/reservations.tsx";
@@ -20,8 +20,12 @@ import Analytics from "@/pages/Admin/analytics.tsx";
 import Notifications from "@/pages/notifications.tsx";
 import CreateNewRoomPage from "@/pages/Admin/create-new-room-page.tsx";
 import {Provider} from "react-redux";
-import {store} from "@/state/store.ts";
+import {persistor, store} from "@/state/store.ts";
 import {QueryClient, QueryClientProvider} from "react-query";
+import { PersistGate } from 'redux-persist/integration/react';
+import {Loader} from "@/components/custom/loader.tsx";
+import EmailSentPage from "@/pages/email-sent-page.tsx";
+import ChangePasswordPage from "@/pages/change-password-page.tsx";
 
 
 const queryClient = new QueryClient();
@@ -29,36 +33,54 @@ const queryClient = new QueryClient();
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <HomePage />
+        element: <HomePage />,
+        errorElement: <NotFoundPage />
     },
     {
         path: "/auth",
         element: <LoginPage />,
+        errorElement: <NotFoundPage />
 
     },
     {
         path: "/register",
         element: <RegisterPage />,
-    },
-    {
-        path: "/404",
-        element: <NotFoundPage />
+        errorElement: <NotFoundPage />
     },
     {
         path: "/forgot-password",
-        element: <ForgotPasswordPage />
+        element: <ForgotPasswordPage />,
+        errorElement: <NotFoundPage />
     },
     {
         path: "/reset-password",
-        element: <ResetPasswordPage />
+        element: <ResetPasswordPage />,
+        errorElement: <NotFoundPage />
     },
     {
         path: "/rooms",
-        element: <RoomsPage />
+        element: <RoomsPage />,
+        errorElement: <NotFoundPage />
+    },
+    {
+        path: "/email-sent",
+        element: <EmailSentPage />,
+        errorElement: <NotFoundPage />
+    },
+
+    {
+        path: "/user",
+        element: <DefaultLayout />,
+        children: [
+            {
+                path: "change-password",
+                element: <ChangePasswordPage />
+            }
+        ]
     },
     {
         path: "/admin",
-        element: <AdminLayout />,
+        element: <DefaultLayout />,
         children: [
             {
                 path: "users",
@@ -97,12 +119,14 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
       <Provider store={store}>
-          <QueryClientProvider client={queryClient}>
-              <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-                  <RouterProvider router={router} />
-                  <Toaster />
-              </ThemeProvider>
-          </QueryClientProvider>
+          <PersistGate loading={<Loader />} persistor={persistor}>
+              <QueryClientProvider client={queryClient}>
+                  <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+                      <RouterProvider router={router} />
+                      <Toaster />
+                  </ThemeProvider>
+              </QueryClientProvider>
+          </PersistGate>
       </Provider>
   </React.StrictMode>,
 )
