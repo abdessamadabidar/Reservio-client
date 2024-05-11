@@ -1,29 +1,77 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {IUser} from "@/types/types.ts";
 
 
-interface IUserSlice {
-	user: IUser | null;
+
+interface IUserState {
+	id: string;
+	firstName: string;
+	lastName: string;
+	email: string;
+	isApproved: boolean;
+	isActivated: boolean;
+	token: string;
+	roles: string[];
 }
 
-const initialState : IUserSlice = {
-	user: null,
+const initialState : IUserState = {
+	id: "",
+	firstName: "",
+	lastName: "",
+	email: "",
+	isApproved: false,
+	isActivated: false,
+	token: "",
+	roles: []
 }
 
 const userSlice = createSlice({
 	name: "userState",
 	initialState,
 	reducers: {
-		setUser: (state, action: PayloadAction<IUser | null>) => {
-			state.user = action.payload;
+		setUser: (_state, action: PayloadAction<IUserState>) => {
+			return action.payload;
+		},
+		setFirstName: (state, action: PayloadAction<string>) => {
+			state.firstName = action.payload;
+		},
+
+		setLastName: (state, action: PayloadAction<string>) => {
+			state.lastName = action.payload;
+		},
+
+		setEmail: (state, action: PayloadAction<string>) => {
+			state.email = action.payload;
+		},
+		setIsApproved: (state, action: PayloadAction<boolean>) => {
+			state.isApproved = action.payload;
+		},
+
+		setIsActivated: (state, action: PayloadAction<boolean>) => {
+			state.isActivated = action.payload;
+		},
+		setToken: (state, action: PayloadAction<string>) => {
+			state.token = action.payload;
+		},
+
+		setRoles: (state, action:PayloadAction<string[]>) => {
+			state.roles = action.payload;
 		},
 
 	},
 
 });
 
-export const isAuthenticated = (state: { userState: IUserSlice }) => state.userState.user !== null;
+export const isAuthenticated = (state: { userState: IUserState }) => state.userState.token !== "";
 
 
 export default userSlice.reducer;
-export const {setUser} = userSlice.actions;
+export const
+	{setUser,
+		setFirstName,
+		setLastName,
+		setIsActivated,
+		setEmail,
+		setIsApproved,
+		setRoles,
+		setToken
+	} = userSlice.actions;

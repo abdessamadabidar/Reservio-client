@@ -26,6 +26,8 @@ import { PersistGate } from 'redux-persist/integration/react';
 import {Loader} from "@/components/custom/loader.tsx";
 import EmailSentPage from "@/pages/email-sent-page.tsx";
 import ChangePasswordPage from "@/pages/change-password-page.tsx";
+import ProfilePage from "@/pages/profile-page.tsx";
+import EditProfilePage from "@/pages/edit-profile-page.tsx";
 
 
 const queryClient = new QueryClient();
@@ -71,10 +73,19 @@ const router = createBrowserRouter([
     {
         path: "/user",
         element: <DefaultLayout />,
+        errorElement: <NotFoundPage />,
         children: [
             {
                 path: "change-password",
                 element: <ChangePasswordPage />
+            },
+            {
+                path: "profile",
+                element: <ProfilePage />
+            },
+            {
+                path: "profile/edit",
+                element: <EditProfilePage />
             }
         ]
     },
@@ -82,6 +93,10 @@ const router = createBrowserRouter([
         path: "/admin",
         element: <DefaultLayout />,
         children: [
+            {
+                path: "profile",
+                element: <ProfilePage />
+            },
             {
                 path: "users",
                 element: <Users />

@@ -11,7 +11,7 @@ export const useLogout = () => {
 	const navigate = useNavigate();
 	const logout = () => {
 		if(isUserAuthenticated) {
-			dispatch(setUser(null));
+			dispatch(setUser({}));
 			toast({
 				title: "Sign up",
 				description: "You have been logged out successfully",

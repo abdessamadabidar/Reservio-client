@@ -1,6 +1,6 @@
 
 export interface IUser {
-	Id?: string;
+	Id: string;
 	FirstName: string;
 	LastName: string;
 	Email: string;
@@ -28,3 +28,9 @@ export interface IEquipment {
 }
 
 
+export interface IUserUpdateRequest {
+	id: string;
+	firstName?: string;
+	lastName?: string;
+	email?: string;
+}

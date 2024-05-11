@@ -30,20 +30,20 @@ export function LoginForm() {
 	const {login, isLoading} = useAuthentication()
 
 	const onSubmit = (data: LoginSchema) => {
-		login(data).then((res) => {
+		login(data).then(() => {
 			toast({
 				title: "Sign up",
 				description: (
-					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100">You have logged in successfull</div>
+					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100">You have logged in successfully</div>
 				),
 				className: "bg-green-500 border-0 text-slate-100"
 			})
 
-		}).catch((error) => {
+		}).catch(() => {
 			toast({
 				title: "Sign in",
 				description: (
-					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100">{error.response.data}</div>
+					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100">Could not log in</div>
 				),
 				variant: "destructive",
 				className: "dark:bg-red-600"

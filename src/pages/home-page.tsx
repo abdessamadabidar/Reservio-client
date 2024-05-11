@@ -6,6 +6,7 @@ import {isAuthenticated} from "@/state/slices/user-slice.ts";
 export default function HomePage() {
 	const isUserAuthenticated  = useSelector(isAuthenticated)
 
+
 	return <div className="relative overflow-hidden">
 		<IndexNavbar />
 		<div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 py-6">
