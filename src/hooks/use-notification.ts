@@ -1,36 +1,83 @@
-import {useEffect, useState} from "react";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import NotificationApi from "@/API/notification-api.ts";
+import {useSelector} from "react-redux";
+import {RootState} from "@/state/store.ts";
+import {INotification} from "@/types/types.ts";
+import { formatDistance } from "date-fns";
 
-import { useToast } from "@/components/ui/use-toast"
-interface UseNotificationProps {
-	initValue: boolean;
-}
+export const useNotification = () => {
 
-export const useNotification = ({initValue}: UseNotificationProps) => {
+	const {id} = useSelector((state: RootState) => state.userState)
+	const queryClient = useQueryClient();
+	const {data: notifications, isLoading} = useQuery({
+		queryKey: ["notifications"],
+		queryFn: async () => NotificationApi.fetchNotifications(id),
+		onSuccess: async (response) => {
+			console.log('Notifications fetched successfully', response)
+		},
+		onError: (error) => {
+			console.log('Error fetching notifications', error)
+		}
 
-	const { toast } = useToast()
-	const [notificationIsRead, setNotificationIsRead] = useState<boolean>(initValue);
+	});
 
-	useEffect(() => {
-		// TODO - change its value in the database
-	}, [notificationIsRead]);
+	const {mutate: MarkAsReadMutation} = useMutation({
+		mutationFn: async (notificationId: string) => await NotificationApi.markAsRead(notificationId),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["notifications"])
+			console.log('Notification marked as read')
+		},
 
+		onError: (error) => {
+			console.log('Error marking notification as read', error)
+		}
 
-	const toggleNotificationRead = () => setNotificationIsRead(!notificationIsRead);
-	const deleteNotification = () => {
-		// TODO - delete notification from database
-		// if status code == 200? then render toast() bellow
-
-		toast({
-			variant: "default",
-			description: "Notification deleted",
-			className: "text-destructive px-4 py-3.5",
-		})
+	})
 
 
-	}
+	const {mutate: MarkAsUnreadMutation} = useMutation({
+		mutationFn: async (notificationId: string) => await NotificationApi.markAsUnread(notificationId),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["notifications"])
+			console.log('Notification marked as unread')
+		},
+
+		onError: (error) => {
+			console.log('Error marking notification as unread', error)
+		}
+	});
+
+
+	const {mutateAsync: DeleteNotificationMutation} = useMutation({
+		mutationFn: async (notificationId: string) => await NotificationApi.deleteNotification(notificationId),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["notifications"])
+			console.log('Notification deleted')
+		},
+
+		onError: (error) => {
+			console.log('Error deleting notification', error)
+		}
+	});
 
 
 
-	return {notificationIsRead, toggleNotificationRead, deleteNotification};
+	const Notifications = notifications?.data.map((notification: { title: string; body: string; isRead: boolean; createdAt: string; id: string; }) => {
+		return {
+			Title: notification.title,
+			Body: notification.body,
+			IsRead: notification.isRead,
+			CreatedAt: formatDistance(notification.createdAt, new Date(), { addSuffix: true }),
+			Id: notification.id
+		}
+	}) as INotification[];
 
+
+
+
+	const markAsRead =  (notificationId: string) =>  MarkAsReadMutation(notificationId);
+	const markAsUnread =  (notificationId: string) =>  MarkAsUnreadMutation(notificationId);
+	const deleteNotification =  (notificationId: string) =>  DeleteNotificationMutation(notificationId);
+
+	return {notifications: Notifications, markAsRead, markAsUnread, deleteNotification, isLoading}
 }

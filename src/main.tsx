@@ -17,7 +17,7 @@ import Dashboard from "@/pages/Admin/dashboard.tsx";
 import Rooms from "@/pages/Admin/rooms.tsx";
 import Reservations from "@/pages/Admin/reservations.tsx";
 import Analytics from "@/pages/Admin/analytics.tsx";
-import Notifications from "@/pages/notifications.tsx";
+import Notifications from "@/pages/notifications-page.tsx";
 import CreateNewRoomPage from "@/pages/Admin/create-new-room-page.tsx";
 import {Provider} from "react-redux";
 import {persistor, store} from "@/state/store.ts";
@@ -86,7 +86,11 @@ const router = createBrowserRouter([
             {
                 path: "profile/edit",
                 element: <EditProfilePage />
-            }
+            },
+            {
+                path: "notifications",
+                element: <Notifications />
+            },
         ]
     },
     {

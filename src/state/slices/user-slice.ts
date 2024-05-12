@@ -13,7 +13,7 @@ interface IUserState {
 	roles: string[];
 }
 
-const initialState : IUserState = {
+export const initialState : IUserState = {
 	id: "",
 	firstName: "",
 	lastName: "",

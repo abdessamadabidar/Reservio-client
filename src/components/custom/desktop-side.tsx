@@ -7,7 +7,7 @@ interface IDesktopAdminSide {
 	className?: string
 }
 
-export default function DesktopAdminSide({className} : IDesktopAdminSide) {
+export default function DesktopSide({className} : IDesktopAdminSide) {
 	return <aside className={cn("min-h-screen  hidden w-14 flex-col border-r bg-background sm:flex", className)}>
 		<nav className="flex flex-col h-full items-center gap-4 px-2 sm:py-5">
 			<TooltipProvider>

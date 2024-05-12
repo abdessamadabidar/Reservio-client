@@ -15,11 +15,11 @@ export interface IUser {
 }
 
 export interface INotification {
-	Id?: string;
+	Id: string;
 	Title: string;
 	Body: string;
 	IsRead: boolean;
-	CreatedAt: Date;
+	CreatedAt: string;
 }
 
 export interface IEquipment {
@@ -33,4 +33,9 @@ export interface IUserUpdateRequest {
 	firstName?: string;
 	lastName?: string;
 	email?: string;
+}
+
+export interface IChangePasswordRequest {
+	oldPassword: string;
+	newPassword: string;
 }

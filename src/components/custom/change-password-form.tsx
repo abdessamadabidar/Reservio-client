@@ -7,11 +7,14 @@ import {PasswordSchema, passwordSchema} from "@/zod/password-schema.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {usePassword} from "@/hooks/use-password.ts";
+import {useUser} from "@/hooks/use-user.ts";
+import {useSelector} from "react-redux";
+import {RootState} from "@/state/store.ts";
 
 
 export default function ChangePasswordForm() {
 
-
+	const {id} = useSelector((state: RootState) => state.userState)
 
 	const changePasswordForm = useForm<PasswordSchema>({
 		resolver: zodResolver(passwordSchema),
@@ -24,18 +27,23 @@ export default function ChangePasswordForm() {
 		confirmPasswordVisibility,
 		togglePasswordVisibility,
 		toggleConfirmPasswordVisibility,
-		passwordMatches,
-		setPassword,
-		setConfirmPassword
 	} = usePassword()
 
 
 
+	const {changePassword} = useUser(id);
+
 
 
 	const onSubmit = (data: PasswordSchema) => {
-		console.log(data);
-
+		const {oldPassword, newPassword} = data;
+		changePassword({oldPassword, newPassword})
+			.then((response) => {
+				console.log('Password changed successfully', response)
+			})
+			.catch((error) => {
+				console.log('Error changing password', error)
+			})
 	}
 
 	return <Card className="rounded-2xl border-0 dark:border shadow space-y-2">
@@ -54,10 +62,10 @@ export default function ChangePasswordForm() {
 					<div className="space-y-4">
 						<FormField
 							control={changePasswordForm.control}
-							name="password"
+							name="oldPassword"
 							render={({ field }) => (
 								<FormItem className="flex-1">
-									<FormLabel>New password</FormLabel>
+									<FormLabel>Old password</FormLabel>
 									<FormControl>
 										<div className="relative">
 											{passwordVisibility && <Button size="icon" variant="outline" className="border-0 absolute right-0 top-1/2 -translate-y-1/2 bg-transparent hover:bg-transparent" onClick={togglePasswordVisibility}>
@@ -71,10 +79,7 @@ export default function ChangePasswordForm() {
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 </svg>
                                             </Button>}
-											<Input {...field}  type={passwordVisibility? "text" : "password"} className={cn("focus-visible:ring-primary")} onChange={(event) => {
-												field.onChange(event.target.value)
-												setPassword(event.target.value)
-											}} />
+											<Input {...field}  type={passwordVisibility? "text" : "password"} className={cn("focus-visible:ring-primary")}  />
 										</div>
 									</FormControl>
 									<FormMessage className="text-xs font-medium" />
@@ -83,10 +88,10 @@ export default function ChangePasswordForm() {
 						/>
 						<FormField
 							control={changePasswordForm.control}
-							name="passwordConfirmation"
+							name="newPassword"
 							render={({ field }) => (
 								<FormItem className="flex-1">
-									<FormLabel>Password confirmation</FormLabel>
+									<FormLabel>New Password</FormLabel>
 									<FormControl>
 										<div className="relative">
 											{confirmPasswordVisibility && <Button size="icon" variant="outline" className="border-0 absolute right-0 top-1/2 -translate-y-1/2 bg-transparent hover:bg-transparent" onClick={toggleConfirmPasswordVisibility}>
@@ -100,19 +105,18 @@ export default function ChangePasswordForm() {
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 </svg>
                                             </Button>}
-											<Input {...field} type={confirmPasswordVisibility? "text" : "password"} className={cn("focus-visible:ring-primary", !passwordMatches && "focus-visible:ring-destructive")} onChange={(event) => {
-												field.onChange(event.target.value)
-												setConfirmPassword(event.target.value)
-											}} />
+											<Input {...field} type={confirmPasswordVisibility? "text" : "password"} className={cn("focus-visible:ring-primary")} />
 										</div>
 									</FormControl>
 									<FormMessage className="text-xs font-medium" />
 								</FormItem>
 							)}
 						/>
-						<Button type="submit" className="w-full md:w-fit hover:bg-secondary dark:text-foreground">
-							Chnage password
-						</Button>
+						<div className="grid justify-end">
+							<Button type="submit" className="w-full md:w-fit hover:bg-secondary dark:text-foreground">
+								Confrim
+							</Button>
+						</div>
 					</div>
 				</form>
 			</Form>
