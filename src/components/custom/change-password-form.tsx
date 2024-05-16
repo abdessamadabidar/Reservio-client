@@ -112,7 +112,7 @@ export default function ChangePasswordForm() {
 								</FormItem>
 							)}
 						/>
-						<div className="grid justify-end">
+						<div className="md:grid md:justify-end">
 							<Button type="submit" className="w-full md:w-fit hover:bg-secondary dark:text-foreground">
 								Confrim
 							</Button>

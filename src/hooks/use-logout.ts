@@ -15,7 +15,7 @@ export const useLogout = () => {
 			toast({
 				title: "Sign up",
 				description: "You have been logged out successfully",
-				className: "bg-green-500 border-0 text-slate-100"
+				className: "bg-green-600 border-0 text-slate-100"
 			})
 			navigate("/auth");
 		}

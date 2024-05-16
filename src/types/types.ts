@@ -14,6 +14,29 @@ export interface IUser {
 	Roles?: string[];
 }
 
+export type User = {
+	Id: string;
+	FirstName: string;
+	LastName: string;
+}
+
+type Room = {
+	Id: string;
+	Name: string;
+	Capacity: number;
+	ImageUrl: string;
+}
+
+export interface IReservation {
+	Id: string;
+	StartDateTime: Date;
+	EndDateTime: Date;
+	Description: string;
+	User: User;
+	Room: Room;
+	CreatedAt: Date;
+}
+
 export interface INotification {
 	Id: string;
 	Title: string;
@@ -38,4 +61,30 @@ export interface IUserUpdateRequest {
 export interface IChangePasswordRequest {
 	oldPassword: string;
 	newPassword: string;
+}
+
+export interface IRoomRequest {
+	Name: string;
+	Capacity: number;
+	Description?: string;
+	Equipments: IEquipment[];
+	ImageFile: File | null;
+}
+
+
+export interface IRoom {
+	Id: string;
+	Name: string;
+	Description: string;
+	Capacity: number;
+	ImagePath: string;
+	RoomEquipments: IEquipment[];
+	CreatedAt: Date;
+}
+
+
+export interface IRoomAvailability {
+	RoomId: string;
+	StartTime: string;
+	EndTime: string;
 }

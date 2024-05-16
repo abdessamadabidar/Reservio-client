@@ -2,28 +2,32 @@ import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/compon
 import {Link} from "react-router-dom";
 import {Bell, Bookmark, DoorOpen, Home, LineChart, LogOut, Users} from "lucide-react";
 import {cn} from "@/lib/utils.ts";
-
-interface IDesktopAdminSide {
+import {useSelector} from "react-redux";
+import {isAdmin} from "@/state/slices/user-slice.ts";
+interface Props {
 	className?: string
 }
 
-export default function DesktopSide({className} : IDesktopAdminSide) {
+export default function DesktopSide({className} : Props) {
+
+	const userIsAdmin = useSelector(isAdmin);
+
 	return <aside className={cn("min-h-screen  hidden w-14 flex-col border-r bg-background sm:flex", className)}>
 		<nav className="flex flex-col h-full items-center gap-4 px-2 sm:py-5">
-			<TooltipProvider>
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<Link
-							to="dashboard"
-							className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent focus:text-white text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8 focus:bg-primary"
-						>
-							<Home className="h-5 w-5"/>
-							<span className="sr-only">Dashboard</span>
-						</Link>
-					</TooltipTrigger>
-					<TooltipContent side="right">Dashboard</TooltipContent>
-				</Tooltip>
-			</TooltipProvider>
+			{userIsAdmin && <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Link
+                            to="dashboard"
+                            className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent focus:text-white text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8 focus:bg-primary"
+                        >
+                            <Home className="h-5 w-5"/>
+                            <span className="sr-only">Dashboard</span>
+                        </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Dashboard</TooltipContent>
+                </Tooltip>
+            </TooltipProvider>}
 			<TooltipProvider>
 				<Tooltip>
 					<TooltipTrigger asChild>

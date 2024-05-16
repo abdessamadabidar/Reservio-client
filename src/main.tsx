@@ -28,6 +28,9 @@ import EmailSentPage from "@/pages/email-sent-page.tsx";
 import ChangePasswordPage from "@/pages/change-password-page.tsx";
 import ProfilePage from "@/pages/profile-page.tsx";
 import EditProfilePage from "@/pages/edit-profile-page.tsx";
+import ReservationsPage from "@/pages/reservations-page.tsx";
+import ReservationDetailsPage from "@/pages/reservation-details-page.tsx";
+import RoomAvailabilityPage from "@/pages/room-details-page.tsx";
 
 
 const queryClient = new QueryClient();
@@ -59,22 +62,30 @@ const router = createBrowserRouter([
         element: <ResetPasswordPage />,
         errorElement: <NotFoundPage />
     },
-    {
-        path: "/rooms",
-        element: <RoomsPage />,
-        errorElement: <NotFoundPage />
-    },
+
     {
         path: "/email-sent",
         element: <EmailSentPage />,
         errorElement: <NotFoundPage />
     },
-
     {
         path: "/user",
         element: <DefaultLayout />,
         errorElement: <NotFoundPage />,
         children: [
+            {
+                path: "rooms",
+                children: [
+                    {
+                        path: "",
+                        element: <RoomsPage />,
+                    },
+                    {
+                        path: "details/:roomId",
+                        element: <RoomAvailabilityPage />
+                    }
+                ]
+            },
             {
                 path: "change-password",
                 element: <ChangePasswordPage />
@@ -91,6 +102,20 @@ const router = createBrowserRouter([
                 path: "notifications",
                 element: <Notifications />
             },
+
+            {
+                path: "my-reservations",
+                children: [
+                    {
+                        path: "",
+                        element: <ReservationsPage />
+                    },
+                    {
+                        path: "details/:reservationId",
+                        element: <ReservationDetailsPage />
+                    },
+                ]
+            }
         ]
     },
     {

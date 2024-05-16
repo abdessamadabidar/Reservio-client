@@ -13,6 +13,7 @@ import {cn} from "@/lib/utils.ts";
 import {useAuthentication} from "@/hooks/use-authentication.ts";
 import {toast} from "@/components/ui/use-toast.ts";
 import {Loader} from "@/components/custom/loader.tsx";
+import {Ban, CircleCheckBig} from "lucide-react";
 
 
 
@@ -32,22 +33,29 @@ export function LoginForm() {
 	const onSubmit = (data: LoginSchema) => {
 		login(data).then(() => {
 			toast({
-				title: "Sign up",
+				title: "Sign in",
 				description: (
-					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100">You have logged in successfully</div>
+					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100 flex items-center gap-x-1.5">
+						<CircleCheckBig className="size-4" />
+						You have logged in successfully
+					</div>
 				),
-				className: "bg-green-500 border-0 text-slate-100"
+				className: "bg-green-600 border-0 text-slate-100"
 			})
 
-		}).catch(() => {
+		}).catch((error) => {
 			toast({
 				title: "Sign in",
 				description: (
-					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100">Could not log in</div>
+					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100 flex items-center gap-x-1.5">
+						<Ban className="size-4" />
+						{error.response.data.toString()}</div>
 				),
 				variant: "destructive",
 				className: "dark:bg-red-600"
 			})
+
+			console.log(error)
 
 		})
 	}
