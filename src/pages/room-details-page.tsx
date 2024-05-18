@@ -10,14 +10,20 @@ import RoomDetailsCard from "@/components/custom/room-details-card.tsx";
 import {useRoom} from "@/hooks/use-room.ts";
 import {useParams} from "react-router-dom";
 import {roomSchedule} from "@/static/room-schedule.ts";
+import NotFoundPage from "@/pages/not-found-page.tsx";
 
 
 export default function RoomDetailsPage() {
 
-	const [date, setDate] = useState<Date | undefined>(new Date());
 	const {roomId} = useParams();
-	const {room, availabilities} = useRoom(roomId!, date!);
-	console.log(availabilities)
+
+	const [date, setDate] = useState<Date>(new Date());
+	const {room, availabilities} = useRoom(roomId!, date);
+
+
+	if (!roomId) {
+		return <NotFoundPage />
+	}
 
 	return <div className="grid md:grid-cols-2 gap-5">
 		<RoomDetailsCard room={room} />
@@ -44,7 +50,7 @@ export default function RoomDetailsPage() {
 						<Calendar
 							mode="single"
 							selected={date}
-							onSelect={setDate}
+							onSelect={(date) => setDate(date!)}
 							disabled={(date) => date < startOfDay(new Date()) || date > addDays(new Date(), 3)}
 							initialFocus
 						/>

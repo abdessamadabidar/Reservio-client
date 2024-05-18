@@ -77,7 +77,7 @@ export const columns: ColumnDef<IReservation>[] = [
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
-							<Link className="flex items-center gap-x-1.5" to={`details/${reservation.Id}`}>
+							<Link className="flex items-center gap-x-1.5" to={`reservation/${reservation.Id}`}>
 								<Info className="h-4 w-4"/>
 								Details
 							</Link>

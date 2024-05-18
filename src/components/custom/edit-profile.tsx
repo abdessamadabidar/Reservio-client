@@ -9,7 +9,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
-import {MoreHorizontal} from "lucide-react";
+import {MoreHorizontal, SquarePen} from "lucide-react";
 import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge.tsx";
 import {cn} from "@/lib/utils.ts";
@@ -70,7 +70,9 @@ export default function EditProfile() {
 	return <Card className="w-[600px] mx-auto">
 		<CardHeader className='border-b flex flex-row items-center justify-between py-2.5'>
 			<div className="flex items-center flex-nowrap gap-x-2">
-				<CardTitle className="text-lg">Edit your information</CardTitle>
+				<CardTitle className="text-lg text-primary flex items-center gap-x-1.5">
+					<SquarePen className="size-4" />
+					Edit your information</CardTitle>
 				<Badge variant="outline" className={cn("text-xs border-0", userState.isActivated ? "bg-green-200 dark:bg-green-400 text-green-700 dark:text-white" : "bg-red-200 dark:bg-red-400 text-red-700 dark:text-white")}>{userState.isActivated ? "Enabled" : "Disabled"}</Badge>
 			</div>
 			<div>

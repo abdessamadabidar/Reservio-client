@@ -1,6 +1,6 @@
 import {IEquipment} from "@/types/types.ts";
 
-export const equipments: IEquipment[] = [
+export const Equipments: IEquipment[] = [
 	{ Id: "1", Name: "Projector" },
 	{ Id: "2", Name: "Whiteboard" },
 	{ Id: "3", Name: "Conference Phone" },

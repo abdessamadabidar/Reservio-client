@@ -14,7 +14,6 @@ import RoomsPage from "@/pages/rooms-page.tsx";
 import {Users} from "@/pages/Admin/users.tsx";
 import DefaultLayout from "@/layouts/default-layout.tsx";
 import Dashboard from "@/pages/Admin/dashboard.tsx";
-import Rooms from "@/pages/Admin/rooms.tsx";
 import Reservations from "@/pages/Admin/reservations.tsx";
 import Analytics from "@/pages/Admin/analytics.tsx";
 import Notifications from "@/pages/notifications-page.tsx";
@@ -28,9 +27,10 @@ import EmailSentPage from "@/pages/email-sent-page.tsx";
 import ChangePasswordPage from "@/pages/change-password-page.tsx";
 import ProfilePage from "@/pages/profile-page.tsx";
 import EditProfilePage from "@/pages/edit-profile-page.tsx";
-import ReservationsPage from "@/pages/reservations-page.tsx";
+import MyReservationsPage from "@/pages/my-reservations-page.tsx";
 import ReservationDetailsPage from "@/pages/reservation-details-page.tsx";
 import RoomAvailabilityPage from "@/pages/room-details-page.tsx";
+import EditRoomPage from "@/pages/Admin/edit-room-page.tsx";
 
 
 const queryClient = new QueryClient();
@@ -41,51 +41,68 @@ const router = createBrowserRouter([
         element: <HomePage />,
         errorElement: <NotFoundPage />
     },
+
+    // Auth routes
     {
         path: "/auth",
-        element: <LoginPage />,
-        errorElement: <NotFoundPage />
+        children: [
+            {
+                path: "login",
+                element: <LoginPage />,
+                errorElement: <NotFoundPage />
 
-    },
-    {
-        path: "/register",
-        element: <RegisterPage />,
-        errorElement: <NotFoundPage />
-    },
-    {
-        path: "/forgot-password",
-        element: <ForgotPasswordPage />,
-        errorElement: <NotFoundPage />
-    },
-    {
-        path: "/reset-password",
-        element: <ResetPasswordPage />,
-        errorElement: <NotFoundPage />
+            },
+            {
+                path: "register",
+                element: <RegisterPage />,
+                errorElement: <NotFoundPage />
+            },
+            {
+                path: "forgot-password",
+                element: <ForgotPasswordPage />,
+                errorElement: <NotFoundPage />
+            },
+            {
+                path: "reset-password",
+                element: <ResetPasswordPage />,
+                errorElement: <NotFoundPage />
+            },
+
+            {
+                path: "email-sent",
+                element: <EmailSentPage />,
+                errorElement: <NotFoundPage />
+            },
+        ]
     },
 
+
+    // Room routes
+
     {
-        path: "/email-sent",
-        element: <EmailSentPage />,
-        errorElement: <NotFoundPage />
+        path: "/rooms",
+        element: <DefaultLayout />,
+        children: [
+            {
+                path: "",
+                element: <RoomsPage />,
+            },
+            {
+                path: "details/:roomId",
+                element: <RoomAvailabilityPage />
+            },
+            {
+                path: "room/:roomId",
+                element: <RoomAvailabilityPage />
+            }
+        ]
     },
+
+    // User routes
     {
         path: "/user",
         element: <DefaultLayout />,
-        errorElement: <NotFoundPage />,
         children: [
-            {
-                path: "rooms",
-                children: [
-                    {
-                        path: "",
-                        element: <RoomsPage />,
-                    },
-                    {
-                        path: "details/:roomId",
-                        element: <RoomAvailabilityPage />
-                    }
-                ]
-            },
             {
                 path: "change-password",
                 element: <ChangePasswordPage />
@@ -104,20 +121,22 @@ const router = createBrowserRouter([
             },
 
             {
-                path: "my-reservations",
+                path: "reservations",
                 children: [
                     {
                         path: "",
-                        element: <ReservationsPage />
+                        element: <MyReservationsPage />
                     },
                     {
-                        path: "details/:reservationId",
+                        path: "reservation/:reservationId",
                         element: <ReservationDetailsPage />
                     },
                 ]
             }
         ]
     },
+
+    // Admin routes
     {
         path: "/admin",
         element: <DefaultLayout />,
@@ -136,11 +155,43 @@ const router = createBrowserRouter([
             },
             {
                 path: "rooms",
-                element: <Rooms />
+                children: [
+                    {
+                        path: "",
+                        element: <RoomsPage />
+                    },
+                    {
+                        path: "room/:roomId",
+                        element: <RoomAvailabilityPage />
+                    },
+                    {
+                        path: "room/:roomId",
+                        element: <RoomAvailabilityPage />
+                    },
+                    {
+                        path: "create-new-room",
+                        element: <CreateNewRoomPage />
+
+                    },
+                    {
+                        path: "room/edit/:roomId",
+                        element: <EditRoomPage />
+                    }
+                ]
             },
             {
                 path: "reservations",
-                element: <Reservations />
+                children: [
+                    {
+                        path: "",
+                        element: <Reservations />
+                    },
+                    {
+                        path: "reservation/:reservationId",
+                        element: <ReservationDetailsPage />
+                    },
+
+                ]
             },
             {
                 path: "analytics",
@@ -150,11 +201,7 @@ const router = createBrowserRouter([
                 path: "notifications",
                 element: <Notifications />
             },
-            {
-                path: "rooms/create-new-room",
-                element: <CreateNewRoomPage />
 
-            }
         ]
     }
 

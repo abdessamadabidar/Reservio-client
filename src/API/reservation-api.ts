@@ -7,5 +7,8 @@ export default {
 	},
 	fetchReservationById: async (reservationId: string) => {
 		return await axiosInstance.get(`/Reservation/${reservationId}`)
+	},
+	fetchAllReservations: async () => {
+		return await axiosInstance.get(`/Reservation`)
 	}
 }

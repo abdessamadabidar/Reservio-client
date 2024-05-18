@@ -132,7 +132,7 @@ export function LoginForm() {
 									</FormItem>
 								)}
 							/>
-							<Link to="/forgot-password" className="font-semibold text-sm text-primary hover:underline">Forgot password?</Link>
+							<Link to="../forgot-password" className="font-semibold text-sm text-primary hover:underline">Forgot password?</Link>
 						</div>
 						
 						<Button type="submit" className="w-full hover:bg-secondary dark:text-foreground">
@@ -144,7 +144,7 @@ export function LoginForm() {
 			</Form>
 			<div className="mt-4 text-center text-sm">
 				Don&apos;t have an account?{" "}
-				<Link to="/register" className="underline">
+				<Link to="../register" className="underline">
 					Sign up
 				</Link>
 			</div>

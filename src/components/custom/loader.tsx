@@ -1,15 +1,17 @@
-import { tailChase } from 'ldrs'
+import { dotSpinner } from 'ldrs'
 
-tailChase.register()
+dotSpinner.register()
+
+
 
 
 export const Loader = () => {
 	return <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-		<l-tail-chase
+		<l-dot-spinner
 			size="60"
-			speed="1.75"
-			color="#2563eb"
-		></l-tail-chase>
+			speed="0.9"
+			color="#0096c7"
+		></l-dot-spinner>
 	</div>
 
 

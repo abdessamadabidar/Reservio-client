@@ -6,7 +6,7 @@ import {IEquipment} from "@/types/types.ts";
 export const useEquipment = () => {
 
 
-	const {data: equipments} = useQuery({
+	const {data: equipments, isLoading: equipmentsAreLoading} = useQuery({
 		queryKey: ["equipments"],
 		queryFn: async () => await EquipmentApi.fetchEquipments(),
 		onSuccess: (response) => {
@@ -27,5 +27,5 @@ export const useEquipment = () => {
 
 
 
-	return {equipments: Equipments}
+	return {equipments: Equipments, equipmentsAreLoading}
 }

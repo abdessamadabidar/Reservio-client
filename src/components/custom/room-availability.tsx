@@ -9,9 +9,9 @@ interface IRoomAvailabilityProps {
 	endTime: string;
 	isAvailable: boolean;
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export default function RoomAvailability({date, startTime, endTime, isAvailable}: IRoomAvailabilityProps) {
-	console.log(date)
 	return <div className="rounded-2xl shadow-sm w-full border bg-white dark:bg-background py-5 px-8 space-y-3">
 		<div className={
 			cn("flex bg-muted rounded-full text-xs font-medium px-3 py-1.5 items-center gap-x-2 text-green-600",

@@ -52,7 +52,7 @@ export const useReservation = (reservationId?: string) => {
 			Id: reservation?.data.room.id,
 			Name: reservation?.data.room.name,
 			Capacity: reservation?.data.room.capacity,
-			ImageUrl: reservation?.data.room.imageUrl
+			ImageUrl: reservation?.data.room.imagePath
 		},
 		CreatedAt: reservation?.data.createdAt
 
@@ -63,33 +63,68 @@ export const useReservation = (reservationId?: string) => {
 
 	const UserReservations = userReservations?.data
 		.map((reservation: { id: string; startDateTime: Date; endDateTime: Date; description: string; user: { id: string; firstName: string; lastName: string; }; room: { id: string; name: string; capacity: number; imageUrl: string; }; createdAt: Date; }) => {
+			return {
+				Id: reservation.id,
+				StartDateTime: reservation.startDateTime,
+				EndDateTime: reservation.endDateTime,
+				Description: reservation.description,
+				User: {
+					Id: reservation.user.id,
+					FirstName: reservation.user.firstName,
+					LastName: reservation.user.lastName
+				},
+				Room: {
+					Id: reservation.room.id,
+					Name: reservation.room.name,
+					Capacity: reservation.room.capacity,
+					ImageUrl: reservation.room.imageUrl
+				},
+				CreatedAt: reservation.createdAt
+			}
 
-		return {
-			Id: reservation.id,
-			StartDateTime: reservation.startDateTime,
-			EndDateTime: reservation.endDateTime,
-			Description: reservation.description,
-			User: {
-				Id: reservation.user.id,
-				FirstName: reservation.user.firstName,
-				LastName: reservation.user.lastName
-			},
-			Room: {
-				Id: reservation.room.id,
-				Name: reservation.room.name,
-				Capacity: reservation.room.capacity,
-				ImageUrl: reservation.room.imageUrl
-			},
-			CreatedAt: reservation.createdAt
-		}
 	}) as IReservation[];
 
 
 
+	const {data: allReservations, isLoading: allReservationsAreLoading} = useQuery({
+		queryKey: ["allReservations"],
+		queryFn: async () => await ReservationApi.fetchAllReservations(),
+		onSuccess: async (data) => {
+			console.log('all reservations', data)
+		},
+		onError: (error) => {
+			console.error('error occurred while fetching all reservations', error)
+		}
+	});
+
+
+	const AllReservations = allReservations?.data
+		.map((reservation: { id: string; startDateTime: Date; endDateTime: Date; description: string; user: { id: string; firstName: string; lastName: string; }; room: { id: string; name: string; capacity: number; imageUrl: string; }; createdAt: Date; }) => {
+
+			return {
+				Id: reservation.id,
+				StartDateTime: reservation.startDateTime,
+				EndDateTime: reservation.endDateTime,
+				Description: reservation.description,
+				User: {
+					Id: reservation.user.id,
+					FirstName: reservation.user.firstName,
+					LastName: reservation.user.lastName
+				},
+				Room: {
+					Id: reservation.room.id,
+					Name: reservation.room.name,
+					Capacity: reservation.room.capacity,
+					ImageUrl: reservation.room.imageUrl
+				},
+				CreatedAt: reservation.createdAt
+			}
+
+		}) as IReservation[];
 
 
 
-	return {userReservations: UserReservations, reservation: Reservation, isLoading, isLoadingReservation}
+	return {userReservations: UserReservations, reservation: Reservation, isLoading, isLoadingReservation, AllReservations, allReservationsAreLoading}
 
 
 

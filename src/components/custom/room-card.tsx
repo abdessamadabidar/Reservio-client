@@ -1,32 +1,25 @@
 import {Badge} from "@/components/ui/badge.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {ReactNode} from "react";
 import {IRoom} from "@/types/types.ts";
-import {CircleArrowRight} from "lucide-react";
+import {SquareArrowOutUpRight} from "lucide-react";
 import {Link} from "react-router-dom";
 
 interface IRoomProps {
-	updateButton?: ReactNode;
-	deleteButton?: ReactNode;
 	room: IRoom;
 }
 
 
 
 
-export default function RoomCard({updateButton, deleteButton, room}: IRoomProps) {
+export default function RoomCard({room}: IRoomProps) {
 	return <div className="border shadow rounded-2xl p-3 md:flex space-y-4 gap-x-7 group bg-white dark:bg-background">
-		<div className="rounded-xl md:w-40 md:aspect-[6/7]  overflow-hidden">
+		<div className="rounded-xl md:w-56 md:aspect-[7/4] overflow-hidden">
 			<img src={room?.ImagePath} loading="eager" alt="" className="size-full rounded-xl object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"/>
 		</div>
 		<div className="flex flex-col justify-between space-y-3 flex-1">
 			<div className="flex  flex-col md:items-start space-y-1 gap-x-5">
 				<div className="flex items-center justify-between w-full">
 					<h5 className="text-xl font-semibold">{room?.Name}</h5>
-					<div className="flex items-center gap-x-4 pe-2">
-						{updateButton}
-						{deleteButton}
-					</div>
 				</div>
 				<div className="flex items-center ml-1">
 					<div className="flex items-center gap-x-1.5 text-muted-foreground">
@@ -39,13 +32,16 @@ export default function RoomCard({updateButton, deleteButton, room}: IRoomProps)
 
 			</div>
 			<div className="flex items-center flex-wrap gap-2 5">
-				{room?.RoomEquipments.map((equipment) => <Badge key={equipment?.Id} variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">{equipment?.Name}</Badge>)}
+				<Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">{room?.RoomEquipments?.[0]?.Name}</Badge>
+				<Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">{room?.RoomEquipments?.[1]?.Name}</Badge>
+				{room?.RoomEquipments?.length > 2 && <Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">+{room?.RoomEquipments?.length - 2}</Badge>}
+				{room?.RoomEquipments?.length == 0 && <p className="text-muted-foreground text-xs font-normal italic whitespace-nowrap">-- No equipments --</p>}
 			</div>
 
-			<Link to={`details/${room?.Id}`}>
-				<Button className="w-full mt-5 py-6 flex items-center gap-x-1.5 rounded-xl hover:bg-secondary dark:text-white">
-					Check availability
-					<CircleArrowRight className="size-4" />
+			<Link to={`room/${room?.Id}`}>
+				<Button variant="outline" className="w-full mt-5 py-6 flex items-center gap-x-1.5 rounded-xl dark:text-white">
+					View
+					<SquareArrowOutUpRight className="size-4" />
 				</Button>
 			</Link>
 		</div>

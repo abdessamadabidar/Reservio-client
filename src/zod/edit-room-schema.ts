@@ -1,7 +1,7 @@
 import {z} from "zod";
 
 
-export const roomSchema = z.object({
+export const editRoomSchema = z.object({
 	Name: z.string({
 		required_error: "Room name is required"
 	}).min(4, "Room name  must be at least 4 characters long.")
@@ -13,13 +13,7 @@ export const roomSchema = z.object({
 	}).min(1),
 
 	Description: z.string().optional(),
-
-	Equipments: z.array(z.object({
-		Id: z.string(),
-		Name: z.string()
-	})),
-
 	ImageFile:z.custom<File>().nullable(),
 })
 
-export type RoomSchema = z.infer<typeof roomSchema>;
+export type EditRoomSchema = z.infer<typeof editRoomSchema>;

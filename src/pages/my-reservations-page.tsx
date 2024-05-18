@@ -4,7 +4,7 @@ import {useReservation} from "@/hooks/use-reservation.ts";
 import {Loader} from "@/components/custom/loader.tsx";
 
 
-export default function ReservationsPage() {
+export default function MyReservationsPage() {
 
 	const {userReservations, isLoading} = useReservation()
 

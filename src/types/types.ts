@@ -72,6 +72,16 @@ export interface IRoomRequest {
 }
 
 
+export interface IRoomUpdateRequest {
+	Id: string;
+	Name: string;
+	Capacity: number;
+	Description?: string;
+	ImageFile: File | null;
+}
+
+
+
 export interface IRoom {
 	Id: string;
 	Name: string;

@@ -1,12 +1,15 @@
 import {useMutation, useQuery, useQueryClient} from "react-query";
-import {IEquipment, IRoom, IRoomAvailability, IRoomRequest} from "@/types/types.ts";
+import {IEquipment, IRoom, IRoomAvailability, IRoomRequest, IRoomUpdateRequest} from "@/types/types.ts";
 import RoomApi from "@/API/room-api.ts";
 import {format} from "date-fns";
+import {useNavigate} from "react-router-dom";
 
 
 
 export const useRoom = (roomId?: string, date?: Date) => {
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
+
 
 	const {mutateAsync: insertRoomMutation} = useMutation({
 
@@ -50,8 +53,12 @@ export const useRoom = (roomId?: string, date?: Date) => {
 			RoomEquipments: room?.roomEquipments?.map((Equipment: { id: string; name: string; }) => {
 
 				return {
-				Id: Equipment?.equipment.id,
-				Name: Equipment?.equipment.name
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					Id: Equipment?.equipment.id,
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					Name: Equipment?.equipment.name
 			}
 		}) as IEquipment[]
 		}
@@ -70,6 +77,8 @@ export const useRoom = (roomId?: string, date?: Date) => {
 
 	})
 
+
+
 	const Room: IRoom = {
 		Id: room?.data.id,
 		Name: room?.data.name,
@@ -78,12 +87,33 @@ export const useRoom = (roomId?: string, date?: Date) => {
 		ImagePath: room?.data.imagePath,
 		CreatedAt: room?.data.createdAt,
 		RoomEquipments: room?.data?.roomEquipments?.map((Equipment: { id: string; name: string; }) => {
+
 			return {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				Id: Equipment?.equipment.id,
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				Name: Equipment?.equipment.name
 			}
 		}) as IEquipment[]
 	}
+
+
+	// update room
+	const  {mutateAsync: updateRoomMutation} = useMutation({
+		mutationFn: async (updatedRoom: IRoomUpdateRequest) => await RoomApi.updateRoom(roomId!, updatedRoom),
+		onSuccess: async (response) => {
+			await queryClient.invalidateQueries(['room', roomId])
+
+			navigate("/admin/rooms/room/" + roomId)
+			console.log('Room updated successfully', response)
+		},
+		onError: (error) => {
+			console.error('Room update error', error)
+		}
+	});
+
 
 
 	const {mutateAsync: deleteRoomMutation} = useMutation({
@@ -99,7 +129,7 @@ export const useRoom = (roomId?: string, date?: Date) => {
 
 	const {data: availabilities} = useQuery({
 		queryKey: ['room-availabilities', date],
-		queryFn: async () => await RoomApi.fetchRoomAvailability(roomId!, date.toLocaleDateString()),
+		queryFn: async () => await RoomApi.fetchRoomAvailability(roomId!, date?.toLocaleDateString() || new Date().toLocaleDateString()),
 		onSuccess: (response) => {
 			console.log('Room availabilities fetched successfully', response)
 		},
@@ -117,10 +147,29 @@ export const useRoom = (roomId?: string, date?: Date) => {
 		}
 	}) as IRoomAvailability[];
 
+
+
+	// update equipments
+	const {mutateAsync: updateEquipmentsMutation} = useMutation({
+		mutationFn: async (equipments: string[]) => await RoomApi.updateRoomEquipments(roomId!, equipments),
+		onSuccess: async (response) => {
+			await queryClient.invalidateQueries(['room', roomId])
+			console.log('Room equipments updated successfully', response)
+		},
+		onError: (error) => {
+			console.error('Room equipments update error', error)
+		}
+
+	});
+
+
+
 	const deleteRoom = async (roomId: string) => await deleteRoomMutation(roomId);
 	const insertRoom = async (room: IRoomRequest) => await insertRoomMutation(room);
+	const updateRoom = async (updatedRoom: IRoomUpdateRequest) => await updateRoomMutation(updatedRoom);
+	const updateEquipments = async (equipments: string[]) => await updateEquipmentsMutation(equipments);
 
 
-	return {insertRoom, fetchRoomIsLoading, fetchRoomsIsLoading, rooms: Rooms, room: Room, deleteRoom, availabilities: Availabilities}
+	return {insertRoom, fetchRoomIsLoading, fetchRoomsIsLoading, rooms: Rooms, room: Room, deleteRoom, availabilities: Availabilities, updateRoom, updateEquipments}
 
 }

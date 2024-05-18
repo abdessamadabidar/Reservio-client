@@ -1,5 +1,8 @@
-import CreateNewRoomForm from "@/components/custom/create-new-room-form.tsx";
+import CreateRoomForm from "@/components/custom/create-room-form.tsx";
 
 export default function CreateNewRoomPage() {
-	return <CreateNewRoomForm />
+
+
+
+	return <CreateRoomForm />
 }

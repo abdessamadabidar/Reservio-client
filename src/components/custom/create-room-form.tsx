@@ -1,6 +1,5 @@
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {z} from "zod";
-import {roomSchema} from "@/zod/room-schema.ts";
+import {RoomSchema, roomSchema} from "@/zod/room-schema.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
@@ -14,18 +13,18 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuTrigger} from "@/componen
 import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group.tsx";
 import {ScrollArea} from "@/components/ui/scroll-area.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import {Ban, CircleCheckBig, CirclePlus, Upload} from "lucide-react";
+import {Ban, CircleCheckBig, CirclePlus, RefreshCw, Upload} from "lucide-react";
 import {useEquipment} from "@/hooks/use-equipment.ts";
 import {useRoom} from "@/hooks/use-room.ts";
 import {toast} from "@/components/ui/use-toast.ts";
 
-type RoomSchema = z.infer<typeof roomSchema>;
 
 
 
-export default function CreateNewRoomForm() {
+
+export default function CreateRoomForm() {
 	const roomForm = useForm<RoomSchema>({
-		resolver: zodResolver(roomSchema)
+		resolver: zodResolver(roomSchema),
 	})
 
 
@@ -123,12 +122,16 @@ export default function CreateNewRoomForm() {
 				<form onSubmit={roomForm.handleSubmit(onSubmit)}>
 					<div className="grid gap-y-3">
 						<div className="grid md:grid-cols-2 md:grid-rows-3  md:gap-x-5">
-							<label htmlFor="dropzone-file" className="col-span-1 row-span-3">
+							<label htmlFor="dropzone-file" className="col-span-1 row-span-3 md:h-[270px] relative">
 								{previewImage.length == 0 && <div className="col-span-1 row-span-3 aspect-square border border-dashed  rounded-xl   cursor-pointer bg-gray-50 hover:bg-slate-50 grid place-items-center">
                                     <Input id="dropzone-file" accept="image/*" type="file" className="hidden" onChange={selectImage} ref={fileInputRef} />
                                     <Upload className="size-6 text-muted-foreground" />
                                 </div>}
-								{previewImage && <img src={previewImage} alt="preview" className="object-cover w-full h-full rounded-lg" onClick={handleReselectImage}/>}
+								{previewImage && <img src={previewImage} alt="preview" className="object-cover w-full h-full rounded-lg" />}
+								{previewImage && <button type="button" className="absolute top-3 left-3 text-white" onClick={handleReselectImage}>
+                                    <Input id="dropzone-file" accept="image/*" type="file" className="hidden" onChange={selectImage} ref={fileInputRef} />
+                                    <RefreshCw className="size-4" />
+                                </button>}
 							</label>
 
 							<div className="flex flex-col justify-between h-full row-span-3">

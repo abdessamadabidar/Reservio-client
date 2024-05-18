@@ -1,5 +1,5 @@
 import axiosInstance from "@/API/axios.ts";
-import {IRoomRequest} from "@/types/types.ts";
+import {IRoomRequest, IRoomUpdateRequest} from "@/types/types.ts";
 
 
 export default {
@@ -35,6 +35,18 @@ export default {
 	},
 	fetchRoomAvailability: async (roomId: string, date: string) => {
 		return await axiosInstance.get(`/Room/${roomId}/availabilities?date=${date}`)
+	},
+	updateRoom: async (roomId: string, room: IRoomUpdateRequest) => {
+		const updateForm = new FormData();
+		updateForm.append('Id', room.Id);
+		updateForm.append('Name', room.Name);
+		updateForm.append('Capacity', room.Capacity.toString());
+		updateForm.append('Description', room.Description || '');
+		updateForm.append('ImageFile', room.ImageFile!);
+		return await axiosInstance.put(`/Room/${roomId}`, updateForm, {headers: {'Content-Type': 'multipart/form-data'}})
+	},
+	updateRoomEquipments: async (roomId: string, equipments: string[]) => {
+		return await axiosInstance.put(`/Room/${roomId}/equipments`, equipments)
 	}
 
 }
