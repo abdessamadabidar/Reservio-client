@@ -4,18 +4,23 @@ import {Link} from "react-router-dom";
 import {isAuthenticated} from "@/state/slices/user-slice.ts";
 import {useSelector} from "react-redux";
 import UserDropdown from "@/components/custom/user-dropdown.tsx";
-import {RootState} from "@/state/store.ts";
+import {Bell} from "lucide-react";
+import {useNotification} from "@/hooks/use-notification.ts";
 
 
 export default function IndexNavbar() {
 	const isUserAuthenticated  = useSelector(isAuthenticated)
-	const user = useSelector((state: RootState) => state.userState.user);
-
+	const {countUnreadNotifications} = useNotification();
 	return <header className="p-5">
 		<div className="flex items-center justify-between">
 			<div className="text-2xl font-bold font-shrikhand text-primary tracking-wider">Reservio</div>
 			<div className="flex items-center gap-x-3">
 				<ModeToggle />
+				{isUserAuthenticated && <Link className="mr-1.5" to="/notifications">
+                    <div className="relative">{countUnreadNotifications > 0 && <span className="absolute -top-1.5 -right-1 text-xxs aspect-square rounded-full size-3.5 grid place-items-center text-white font-medium bg-red-600">{countUnreadNotifications}</span>}
+                        <Bell className="h-5 w-5"/>
+                    </div>
+                </Link>}
 				{!isUserAuthenticated && <Link to="/auth">
                     <Button size="sm" className="flex items-center gap-x-1.5 rounded-full hover:bg-secondary dark:text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
@@ -24,7 +29,7 @@ export default function IndexNavbar() {
                         Log in
                     </Button>
                 </Link>}
-				{isUserAuthenticated && <UserDropdown user={user} />}
+				{isUserAuthenticated && <UserDropdown/>}
 			</div>
 		</div>
 	</header>

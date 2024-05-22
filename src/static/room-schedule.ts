@@ -1,25 +1,25 @@
-
+import {format} from "date-fns";
 
 
 export const roomSchedule = [
 	{
-		startTime: "09:00 AM",
-		endTime: "11:00 AM",
+		startTime: format(new Date("2022-01-01T08:00:00"), "hh:mm a"),
+		endTime: format(new Date("2022-01-01T10:00:00"), "hh:mm a"),
 	},
 	{
-		startTime: "11:00 AM",
-		endTime: "01:00 PM",
+		startTime: format(new Date("2022-01-01T10:00:00"), "hh:mm a"),
+		endTime: format(new Date("2022-01-01T12:00:00"), "hh:mm a"),
 	},
 	{
-		startTime: "01:00 PM",
-		endTime: "15:00 PM",
+		startTime: format(new Date("2022-01-01T12:00:00"), "hh:mm a"),
+		endTime: format(new Date("2022-01-01T14:00:00"), "hh:mm a"),
 	},
 	{
-		startTime: "15:00 PM",
-		endTime: "17:00 PM",
+		startTime: format(new Date("2022-01-01T14:00:00"), "hh:mm a"),
+		endTime: format(new Date("2022-01-01T16:00:00"), "hh:mm a"),
 	},
 	{
-		startTime: "17:00 PM",
-		endTime: "19:00 PM",
+		startTime: format(new Date("2022-01-01T16:00:00"), "hh:mm a"),
+		endTime: format(new Date("2022-01-01T18:00:00"), "hh:mm a"),
 	}
 ];

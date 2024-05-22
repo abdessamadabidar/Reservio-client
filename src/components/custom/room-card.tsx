@@ -12,7 +12,7 @@ interface IRoomProps {
 
 
 export default function RoomCard({room}: IRoomProps) {
-	return <div className="border shadow rounded-2xl p-3 md:flex space-y-4 gap-x-7 group bg-white dark:bg-background">
+	return <div className="border shadow rounded-2xl p-3 md:flex space-y-4 gap-x-7 group bg-white dark:bg-background h-52">
 		<div className="rounded-xl md:w-56 md:aspect-[7/4] overflow-hidden">
 			<img src={room?.ImagePath} loading="eager" alt="" className="size-full rounded-xl object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"/>
 		</div>
@@ -31,14 +31,14 @@ export default function RoomCard({room}: IRoomProps) {
 				</div>
 
 			</div>
-			<div className="flex items-center flex-wrap gap-2 5">
-				<Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">{room?.RoomEquipments?.[0]?.Name}</Badge>
-				<Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">{room?.RoomEquipments?.[1]?.Name}</Badge>
+			<div className="flex items-center flex-nowrap flex-wrap gap-2 5">
+				{room?.RoomEquipments?.[0] && <Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">{room?.RoomEquipments?.[0]?.Name}</Badge>}
+				{room?.RoomEquipments?.[1] && <Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">{room?.RoomEquipments?.[1]?.Name}</Badge>}
 				{room?.RoomEquipments?.length > 2 && <Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">+{room?.RoomEquipments?.length - 2}</Badge>}
 				{room?.RoomEquipments?.length == 0 && <p className="text-muted-foreground text-xs font-normal italic whitespace-nowrap">-- No equipments --</p>}
 			</div>
 
-			<Link to={`room/${room?.Id}`}>
+			<Link to={`room/${room?.Id}/details`}>
 				<Button variant="outline" className="w-full mt-5 py-6 flex items-center gap-x-1.5 rounded-xl dark:text-white">
 					View
 					<SquareArrowOutUpRight className="size-4" />

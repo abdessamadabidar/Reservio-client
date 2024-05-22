@@ -22,4 +22,13 @@ export default {
 	disableAccount: async (userId: string) => {
 		return await axiosInstance.put(`/User/${userId}/disable`)
 	},
+	fetchAllUsers: async () => {
+		return await axiosInstance.get(`/User`)
+	},
+	fetchUserReservations: async (userId: string) => {
+		return await axiosInstance.get(`/User/${userId}/reservations`)
+	},
+	deleteUser: async (userId: string) => {
+		return await axiosInstance.delete(`/User/${userId}`)
+	}
 }

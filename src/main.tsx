@@ -15,7 +15,6 @@ import {Users} from "@/pages/Admin/users.tsx";
 import DefaultLayout from "@/layouts/default-layout.tsx";
 import Dashboard from "@/pages/Admin/dashboard.tsx";
 import Reservations from "@/pages/Admin/reservations.tsx";
-import Analytics from "@/pages/Admin/analytics.tsx";
 import Notifications from "@/pages/notifications-page.tsx";
 import CreateNewRoomPage from "@/pages/Admin/create-new-room-page.tsx";
 import {Provider} from "react-redux";
@@ -31,6 +30,9 @@ import MyReservationsPage from "@/pages/my-reservations-page.tsx";
 import ReservationDetailsPage from "@/pages/reservation-details-page.tsx";
 import RoomAvailabilityPage from "@/pages/room-details-page.tsx";
 import EditRoomPage from "@/pages/Admin/edit-room-page.tsx";
+import ProtectedRoute from "@/routes/protected-routes.tsx";
+import UnauthorizedPage from "@/pages/unauthorized-page.tsx";
+import UserReservationsPage from "@/pages/Admin/user-reservations-page.tsx";
 
 
 const queryClient = new QueryClient();
@@ -41,8 +43,87 @@ const router = createBrowserRouter([
         element: <HomePage />,
         errorElement: <NotFoundPage />
     },
+    {
+        path: "/unauthorized",
+        element: <UnauthorizedPage />
+    },
+
 
     // Auth routes
+    {
+        path: "/",
+        element: <DefaultLayout />,
+        children: [
+            {
+                path: "notifications",
+                element: <ProtectedRoute allowedRole="USER">
+                    <Notifications />
+                </ProtectedRoute>
+            },
+            {
+                path: "profile",
+                children: [
+                    {
+                        path: "",
+                        element: <ProtectedRoute allowedRole="USER">
+                            <ProfilePage />
+                        </ProtectedRoute>
+                    },
+                    {
+                        path: "edit",
+                        element: <ProtectedRoute allowedRole="USER">
+                            <EditProfilePage />
+                        </ProtectedRoute>
+
+                    },
+                    {
+                        path: "change-password",
+                        element: <ProtectedRoute allowedRole="USER">
+                            <ChangePasswordPage />
+                        </ProtectedRoute>
+
+                    },
+                ]
+
+            },
+            {
+                path: "rooms",
+                children: [
+                    {
+                        path: "",
+                        element: <ProtectedRoute allowedRole="USER">
+                            <RoomsPage />,
+                        </ProtectedRoute>
+                    },
+                    {
+                        path: "room/:roomId/details",
+                        element: <ProtectedRoute allowedRole="USER">
+                            <RoomAvailabilityPage />
+                        </ProtectedRoute>
+                    },
+                ]
+            },
+
+            {
+                path: "my-reservations",
+                children:[
+                    {
+                        path: "",
+                        element:  <ProtectedRoute allowedRole="USER">
+                            <MyReservationsPage />
+                        </ProtectedRoute>
+                    },
+                    {
+                        path: "reservation/:reservationId",
+                        element: <ProtectedRoute allowedRole="USER">
+                            <ReservationDetailsPage />
+                        </ProtectedRoute>
+                    },
+                ]
+            },
+
+        ]
+    },
     {
         path: "/auth",
         children: [
@@ -77,64 +158,7 @@ const router = createBrowserRouter([
     },
 
 
-    // Room routes
 
-    {
-        path: "/rooms",
-        element: <DefaultLayout />,
-        children: [
-            {
-                path: "",
-                element: <RoomsPage />,
-            },
-            {
-                path: "details/:roomId",
-                element: <RoomAvailabilityPage />
-            },
-            {
-                path: "room/:roomId",
-                element: <RoomAvailabilityPage />
-            }
-        ]
-    },
-
-    // User routes
-    {
-        path: "/user",
-        element: <DefaultLayout />,
-        children: [
-            {
-                path: "change-password",
-                element: <ChangePasswordPage />
-            },
-            {
-                path: "profile",
-                element: <ProfilePage />
-            },
-            {
-                path: "profile/edit",
-                element: <EditProfilePage />
-            },
-            {
-                path: "notifications",
-                element: <Notifications />
-            },
-
-            {
-                path: "reservations",
-                children: [
-                    {
-                        path: "",
-                        element: <MyReservationsPage />
-                    },
-                    {
-                        path: "reservation/:reservationId",
-                        element: <ReservationDetailsPage />
-                    },
-                ]
-            }
-        ]
-    },
 
     // Admin routes
     {
@@ -142,40 +166,43 @@ const router = createBrowserRouter([
         element: <DefaultLayout />,
         children: [
             {
-                path: "profile",
-                element: <ProfilePage />
-            },
-            {
                 path: "users",
-                element: <Users />
+                children: [
+                    {
+                        path: "",
+                        element: <ProtectedRoute allowedRole="ADMIN">
+                            <Users />
+                        </ProtectedRoute>
+                    },
+                    {
+                        path: "user/:userId/reservations",
+                        element: <ProtectedRoute allowedRole="ADMIN">
+                            <UserReservationsPage />
+                        </ProtectedRoute>
+                    }
+                ]
             },
             {
                 path: "dashboard",
-                element: <Dashboard />
+                element: <ProtectedRoute allowedRole="ADMIN">
+                    <Dashboard />
+                </ProtectedRoute>
             },
             {
                 path: "rooms",
                 children: [
                     {
-                        path: "",
-                        element: <RoomsPage />
-                    },
-                    {
-                        path: "room/:roomId",
-                        element: <RoomAvailabilityPage />
-                    },
-                    {
-                        path: "room/:roomId",
-                        element: <RoomAvailabilityPage />
-                    },
-                    {
                         path: "create-new-room",
-                        element: <CreateNewRoomPage />
+                        element: <ProtectedRoute allowedRole="ADMIN">
+                            <CreateNewRoomPage />
+                        </ProtectedRoute>
 
                     },
                     {
                         path: "room/edit/:roomId",
-                        element: <EditRoomPage />
+                        element: <ProtectedRoute allowedRole="ADMIN">
+                            <EditRoomPage />
+                        </ProtectedRoute>
                     }
                 ]
             },
@@ -184,22 +211,18 @@ const router = createBrowserRouter([
                 children: [
                     {
                         path: "",
-                        element: <Reservations />
+                        element: <ProtectedRoute allowedRole="ADMIN">
+                            <Reservations />
+                        </ProtectedRoute>
                     },
                     {
                         path: "reservation/:reservationId",
-                        element: <ReservationDetailsPage />
+                        element: <ProtectedRoute allowedRole="ADMIN">
+                            <ReservationDetailsPage />
+                        </ProtectedRoute>
                     },
 
                 ]
-            },
-            {
-                path: "analytics",
-                element: <Analytics />
-            },
-            {
-                path: "notifications",
-                element: <Notifications />
             },
 
         ]
@@ -219,5 +242,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               </QueryClientProvider>
           </PersistGate>
       </Provider>
-  </React.StrictMode>,
+  </React.StrictMode>
 )

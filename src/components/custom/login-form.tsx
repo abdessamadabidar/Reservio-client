@@ -33,7 +33,6 @@ export function LoginForm() {
 	const onSubmit = (data: LoginSchema) => {
 		login(data).then(() => {
 			toast({
-				title: "Sign in",
 				description: (
 					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100 flex items-center gap-x-1.5">
 						<CircleCheckBig className="size-4" />
@@ -45,7 +44,6 @@ export function LoginForm() {
 
 		}).catch((error) => {
 			toast({
-				title: "Sign in",
 				description: (
 					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100 flex items-center gap-x-1.5">
 						<Ban className="size-4" />

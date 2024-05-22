@@ -62,7 +62,7 @@ const userSlice = createSlice({
 });
 
 export const isAuthenticated = (state: { userState: IUserState }) => state.userState.token !== "";
-export const isAdmin = (state: { userState: IUserState }) => state.userState.roles.includes("Admin");
+export const isAdmin = (state: { userState: IUserState }) => state.userState.roles.includes("ADMIN");
 
 
 export default userSlice.reducer;

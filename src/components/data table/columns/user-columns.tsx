@@ -1,28 +1,23 @@
 import { IUser } from "@/types/types"
 import {ColumnDef} from "@tanstack/react-table";
-import {ArrowUpDown, Bookmark, MoreHorizontal, ShieldCheck, ShieldMinus, UserRoundCheck, UserRoundX} from "lucide-react"
+import {ArrowUpDown} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils";
 import {Badge} from "@/components/ui/badge.tsx";
-import {Link} from "react-router-dom";
+import {format} from "date-fns";
+import UserTableDropdown from "@/components/data table/user-table-dropdown.tsx";
 
 export const columns: ColumnDef<IUser>[] = [
 	{
 		accessorKey: "FirstName",
 		header: "First name",
+		cell: ({row}) => <div>{row.original.FirstName?.charAt(0).toUpperCase() + row.original.FirstName?.slice(1)}</div>
 	},
 	{
 		accessorKey: "LastName",
 		header: "Last name",
+		cell: ({row}) => <div>{row.original.LastName?.charAt(0).toUpperCase() + row.original.LastName?.slice(1)}</div>
 	},
 	{
 		accessorKey: "Email",
@@ -47,7 +42,7 @@ export const columns: ColumnDef<IUser>[] = [
 				</Button>
 			)
 		},
-		cell: ({row}) => <p className="font-medium">{row.original.CreatedAt?.toLocaleString()}</p>
+		cell: ({row}) => <p className="font-medium">{format(row.original.CreatedAt!, 'yyyy-MM-dd HH:mm a')}</p>
 	},
 	{
 		accessorKey: "VerifiedAt",
@@ -62,7 +57,10 @@ export const columns: ColumnDef<IUser>[] = [
 				</Button>
 			)
 		},
-		cell: ({row}) => <p className="font-medium">{row.original.VerifiedAt?.toLocaleString()}</p>
+		cell: ({row}) => {
+			if(!row.original.VerifiedAt) return <p className="text-center text-xs italic">Not verified</p>
+			return <p className="font-medium">{format(new Date(row.original.VerifiedAt!), 'yyyy-MM-dd HH:mm a')}</p>
+		}
 	},
 	{
 		accessorKey: "IsApproved",
@@ -74,34 +72,7 @@ export const columns: ColumnDef<IUser>[] = [
 		cell: ({ row }) => {
 			const user = row.original
 
-			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="h-8 w-8 p-0">
-							<span className="sr-only">Open menu</span>
-							<MoreHorizontal className="h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>
-							<Link className="flex items-center gap-x-1.5" to="">
-								<Bookmark className="h-4 w-4"/>
-								Reservations
-							</Link>
-						</DropdownMenuItem>
-						{!user.IsApproved && <DropdownMenuItem className="flex items-center gap-x-1.5"><UserRoundCheck className="h-4 w-4"/>Approve</DropdownMenuItem>}
-						{user.IsActivated && <DropdownMenuItem className="flex items-center gap-x-1.5"><ShieldMinus className="h-4 w-4"  />Disable</DropdownMenuItem>}
-						{!user.IsActivated && <DropdownMenuItem className="flex items-center gap-x-1.5"><ShieldCheck className="h-4 w-4"  />Enable</DropdownMenuItem>}
-						<DropdownMenuSeparator />
-						<DropdownMenuItem className="flex items-center gap-x-1.5 text-destructive focus:text-destructive">
-							<UserRoundX className="h-4 w-4"  />
-							Delete
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			)
+			return <UserTableDropdown user={user} />
 		},
 	},
 ]

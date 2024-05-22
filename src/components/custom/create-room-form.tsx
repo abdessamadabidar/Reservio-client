@@ -60,12 +60,12 @@ export default function CreateRoomForm() {
 					className: "bg-green-600 border-0 text-slate-100"
 				})
 			})
-			.catch(() => {
+			.catch((error) => {
 				toast({
 					description: (
 						<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100 flex items-center gap-x-1.5">
 							<Ban className="size-4" />
-							Error while creating room
+							{error.response?.data?.Room?.errors?.[0].errorMessage}
 						</div>
 					),
 					variant: "destructive",

@@ -1,6 +1,6 @@
 import {CalendarIcon} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
-import {addDays, format, startOfDay} from "date-fns";
+import {addDays, format} from "date-fns";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
 import {cn} from "@/lib/utils.ts";
 import {useState} from "react";
@@ -11,19 +11,32 @@ import {useRoom} from "@/hooks/use-room.ts";
 import {useParams} from "react-router-dom";
 import {roomSchedule} from "@/static/room-schedule.ts";
 import NotFoundPage from "@/pages/not-found-page.tsx";
+import {Loader} from "@/components/custom/loader.tsx";
+
 
 
 export default function RoomDetailsPage() {
 
 	const {roomId} = useParams();
 
-	const [date, setDate] = useState<Date>(new Date());
-	const {room, availabilities} = useRoom(roomId!, date);
+	const [date, setDate] = useState<Date>(addDays(new Date(), 1));
+	const {room, availabilities, fetchRoomsIsLoading, roomAvailabilitiesAreLoading} = useRoom(roomId!, date);
+
+
 
 
 	if (!roomId) {
 		return <NotFoundPage />
 	}
+
+	if (fetchRoomsIsLoading || roomAvailabilitiesAreLoading) {
+		return <div className="absolute top-0 left-0 w-full min-h-screen bg-background">
+			<Loader />
+		</div>
+	}
+
+
+
 
 	return <div className="grid md:grid-cols-2 gap-5">
 		<RoomDetailsCard room={room} />
@@ -51,15 +64,20 @@ export default function RoomDetailsPage() {
 							mode="single"
 							selected={date}
 							onSelect={(date) => setDate(date!)}
-							disabled={(date) => date < startOfDay(new Date()) || date > addDays(new Date(), 3)}
+							disabled={(date) => date <= new Date() || date > addDays(new Date(), 3)}
 							initialFocus
 						/>
 					</PopoverContent>
 				</Popover>
 			</div>
 			{roomSchedule?.map((availability, index) =>{
-				const isAvailable = availabilities?.filter((av) => av.StartTime === availability.startTime && av.EndTime === availability.endTime).length === 0;
-				return <RoomAvailability isAvailable={isAvailable} date={date!} key={index} {...availability} />
+				const isAvailable = availabilities?.filter(
+					(av) => av.StartTime === availability.startTime
+										&& av.EndTime === availability.endTime
+										&& av.RoomId === roomId
+					).length === 0
+
+				return <RoomAvailability roomId={roomId} isAvailable={isAvailable} date={date!} key={index} {...availability} />
 			})}
 		</div>
 	</div>

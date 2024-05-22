@@ -1,26 +1,18 @@
-import {useQuery} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 import ReservationApi from "@/API/reservation-api.ts";
-import {useSelector} from "react-redux";
-import {RootState} from "@/state/store.ts";
-import {IReservation} from "@/types/types.ts";
+import {IReservation, IReservationRequest} from "@/types/types.ts";
 
 
-export const useReservation = (reservationId?: string) => {
+interface Props {
+	reservationId?: string;
+	userId?: string;
+}
 
 
-	const {id} = useSelector((state: RootState) => state.userState);
+export const useReservation = ({reservationId} : Props = {}) => {
 
-	const {data: userReservations, isLoading}
-		= useQuery({
-		queryKey: "reservations",
-		queryFn: async () => await ReservationApi.fetchReservations(id),
-		onSuccess: async (data) => {
-			console.log('user reservations',data)
-		},
-		onError: (error) => {
-			console.error('error occurred while fetching reservations', error)
-		}
-	});
+
+	const queryClient = useQueryClient();
 
 
 	const {data: reservation, isLoading: isLoadingReservation}
@@ -32,7 +24,8 @@ export const useReservation = (reservationId?: string) => {
 		},
 		onError: err =>  {
 			console.error('error occurred while getting reservation by Id', err)
-		}
+		},
+		enabled: !!reservationId
 	});
 
 
@@ -58,31 +51,6 @@ export const useReservation = (reservationId?: string) => {
 
 	} as IReservation;
 
-
-
-
-	const UserReservations = userReservations?.data
-		.map((reservation: { id: string; startDateTime: Date; endDateTime: Date; description: string; user: { id: string; firstName: string; lastName: string; }; room: { id: string; name: string; capacity: number; imageUrl: string; }; createdAt: Date; }) => {
-			return {
-				Id: reservation.id,
-				StartDateTime: reservation.startDateTime,
-				EndDateTime: reservation.endDateTime,
-				Description: reservation.description,
-				User: {
-					Id: reservation.user.id,
-					FirstName: reservation.user.firstName,
-					LastName: reservation.user.lastName
-				},
-				Room: {
-					Id: reservation.room.id,
-					Name: reservation.room.name,
-					Capacity: reservation.room.capacity,
-					ImageUrl: reservation.room.imageUrl
-				},
-				CreatedAt: reservation.createdAt
-			}
-
-	}) as IReservation[];
 
 
 
@@ -123,8 +91,42 @@ export const useReservation = (reservationId?: string) => {
 		}) as IReservation[];
 
 
+	const {mutateAsync: createReservation} = useMutation({
+		mutationFn: async (reservation: IReservationRequest) => await ReservationApi.createReservation(reservation),
+		onSuccess: async (data) => {
+			await queryClient.invalidateQueries("room")
+			console.log('created reservation', data)
+		},
+		onError: (error) => {
+			console.error('error occurred while creating reservation', error)
+		}
 
-	return {userReservations: UserReservations, reservation: Reservation, isLoading, isLoadingReservation, AllReservations, allReservationsAreLoading}
+	})
+
+
+	const {mutateAsync: deleteReservationMutation} = useMutation({
+		mutationFn: async (reservationId: string) => await ReservationApi.deleteReservation(reservationId),
+		onSuccess: async (data) => {
+			await queryClient.invalidateQueries("userReservations")
+			console.log('updated reservation', data)
+		},
+		onError: (error) => {
+			console.error('error occurred while updating reservation', error)
+		}
+	})
+
+
+	const createNewReservation = async (reservation: IReservationRequest) => createReservation(reservation);
+	const deleteReservation = async (reservationId: string) => deleteReservationMutation(reservationId);
+
+	return {
+		reservation: Reservation,
+		isLoadingReservation,
+		AllReservations,
+		allReservationsAreLoading,
+		createNewReservation,
+		deleteReservation
+	}
 
 
 

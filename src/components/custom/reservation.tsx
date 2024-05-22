@@ -1,9 +1,11 @@
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {Calendar, Clock, DoorOpen, Info, MoveRight, SquarePen, User, X} from "lucide-react";
+import {BookmarkX, Calendar, Clock, DoorOpen, Info, MoveRight, User} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
 import {IReservation} from "@/types/types.ts";
 import {format} from "date-fns";
 import {Textarea} from "@/components/ui/textarea.tsx";
+import CancelReservationConfirmationDialog from "@/components/custom/cancel-reservation-confirmation-dialog.tsx";
+import {useState} from "react";
 
 
 interface Props {
@@ -12,9 +14,12 @@ interface Props {
 
 export default function Reservation({reservation}: Props) {
 
+	const [isOpen, setOpen] = useState(false);
+	const toggleDialog = () => setOpen(!isOpen);
+
 
 	return <div className="grid md:grid-cols-5 gap-5">
-		<div className="md:col-span-3 col-span-5 rounded-xl">
+		<div className="md:col-span-3 col-span-5 rounded-xl h-[80vh]">
 			<img src={reservation?.Room?.ImageUrl} className="w-full h-full object-cover rounded-xl" alt="reserved room" />
 		</div>
 		<Card className="col-span-5 md:col-span-2  rounded-xl relative">
@@ -55,7 +60,7 @@ export default function Reservation({reservation}: Props) {
 					</div>
 					<div className="col-span-2 space-y-3">
 						<p className="font-medium text-primary">Description :</p>
-						<Textarea value={reservation?.Description} disabled />
+						<Textarea value={reservation?.Description ? reservation?.Description : "-- Empty --"} disabled />
 					</div>
 					<div className="flex items-center gap-x-5 text-primary">
 						<p className="font-medium">Equipments :</p>
@@ -64,15 +69,12 @@ export default function Reservation({reservation}: Props) {
 				</div>
 			</CardContent>
 			<CardFooter className="flex flex-col md:flex-row items-center gap-x-3 gap-y-2 justify-end md:absolute md:bottom-0 md:right-0">
-				<Button size="sm" variant="outline"  className="flex items-center gap-x-1 w-full">
-					<SquarePen className="size-4" />
-					Edit
-				</Button>
-				<Button size="sm" variant="outline" className="dark:bg-red-600 bg-destructive text-white hover:text-white hover:bg-red-600 flex items-center gap-x-1 w-full">
-					<X className="w-4 h-4" />
+				<Button size="sm" variant="outline" className="dark:bg-red-600 bg-destructive text-white hover:text-white hover:bg-red-600 flex items-center gap-x-1 w-full" onClick={toggleDialog}>
+					<BookmarkX className="w-4 h-4" />
 					Cancel
 				</Button>
 			</CardFooter>
 		</Card>
+		<CancelReservationConfirmationDialog isOpen={isOpen} toggleOpen={toggleDialog} reservationId={reservation?.Id} />
 	</div>
 }

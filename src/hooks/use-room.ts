@@ -37,7 +37,7 @@ export const useRoom = (roomId?: string, date?: Date) => {
 		onError: (error) => {
 			console.error('Rooms fetch error', error)
 
-		}
+		},
 
 	})
 
@@ -73,8 +73,8 @@ export const useRoom = (roomId?: string, date?: Date) => {
 		},
 		onError: (error) => {
 			console.error('Room fetch error', error)
-		}
-
+		},
+		enabled: !!roomId
 	})
 
 
@@ -120,6 +120,7 @@ export const useRoom = (roomId?: string, date?: Date) => {
 		mutationFn: async (roomId: string) => await RoomApi.removeRoom(roomId),
 		onSuccess: async (response) => {
 			await queryClient.invalidateQueries(['rooms'])
+			navigate("/rooms")
 			console.log('Room deleted successfully', response)
 		},
 		onError: (error) => {
@@ -127,7 +128,7 @@ export const useRoom = (roomId?: string, date?: Date) => {
 		}
 	});
 
-	const {data: availabilities} = useQuery({
+	const {data: availabilities, isLoading: roomAvailabilitiesAreLoading} = useQuery({
 		queryKey: ['room-availabilities', date],
 		queryFn: async () => await RoomApi.fetchRoomAvailability(roomId!, date?.toLocaleDateString() || new Date().toLocaleDateString()),
 		onSuccess: (response) => {
@@ -135,8 +136,8 @@ export const useRoom = (roomId?: string, date?: Date) => {
 		},
 		onError: (error) => {
 			console.error('Room availabilities fetch error', error)
-		}
-
+		},
+		enabled: !!roomId
 	});
 
 	const Availabilities : IRoomAvailability[] = availabilities?.data.map((availability) => {
@@ -170,6 +171,6 @@ export const useRoom = (roomId?: string, date?: Date) => {
 	const updateEquipments = async (equipments: string[]) => await updateEquipmentsMutation(equipments);
 
 
-	return {insertRoom, fetchRoomIsLoading, fetchRoomsIsLoading, rooms: Rooms, room: Room, deleteRoom, availabilities: Availabilities, updateRoom, updateEquipments}
+	return {insertRoom, fetchRoomIsLoading, fetchRoomsIsLoading, roomAvailabilitiesAreLoading, rooms: Rooms, room: Room, deleteRoom, availabilities: Availabilities, updateRoom, updateEquipments}
 
 }

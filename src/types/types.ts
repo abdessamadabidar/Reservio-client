@@ -14,6 +14,10 @@ export interface IUser {
 	Roles?: string[];
 }
 
+
+
+
+
 export type User = {
 	Id: string;
 	FirstName: string;
@@ -97,4 +101,13 @@ export interface IRoomAvailability {
 	RoomId: string;
 	StartTime: string;
 	EndTime: string;
+}
+
+
+export interface IReservationRequest {
+	StartDateTime: string;
+	EndDateTime: string;
+	Description?: string | null;
+	RoomId: string;
+	UserId: string;
 }

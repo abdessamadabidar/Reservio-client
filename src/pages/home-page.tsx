@@ -16,7 +16,7 @@ export default function HomePage() {
 			</div>
 
 			<div className="mt-10 relative max-w-5xl mx-auto">
-				<div className="w-full object-cover h-96 sm:h-[480px] bg-[url('src/assets/coworking-macherzentrum-toggenburg-BSOEhCBXYhk-unsplash.jpg')] bg-no-repeat bg-center bg-cover rounded-xl"></div>
+				<div className="w-full object-cover h-96 sm:h-[480px] bg-[url('/src/assets/coworking-macherzentrum-toggenburg-BSOEhCBXYhk-unsplash.jpg')] bg-no-repeat bg-center bg-cover rounded-xl"></div>
 
 				<div className="absolute inset-0 size-full">
 					<div className="flex flex-col justify-center items-center size-full">

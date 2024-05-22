@@ -5,6 +5,9 @@ import {Badge} from "@/components/ui/badge.tsx";
 import {IRoom} from "@/types/types.ts";
 import ExpandedImageDialog from "@/components/custom/expanded-image-dialog.tsx";
 import RoomDropdown from "@/components/custom/room-dropdown.tsx";
+import {useSelector} from "react-redux";
+import {isAdmin} from "@/state/slices/user-slice.ts";
+
 
 
 interface Props {
@@ -13,13 +16,16 @@ interface Props {
 
 export default function RoomDetailsCard({room}: Props) {
 
+	const userIsAdmin = useSelector(isAdmin);
+
+
 	return <Card className="rounded-2xl text-sm">
 		<CardHeader className="space-y-0 flex flex-row items-center justify-between">
 			<CardTitle className="text-lg text-primary flex items-center gap-x-1.5 font-semibold">
 				<Info className="size-4" />
 				Room details
 			</CardTitle>
-			<RoomDropdown room={room} />
+			{userIsAdmin && <RoomDropdown room={room} />}
 		</CardHeader>
 		<CardContent className="space-y-6">
 			<div className="h-80 rounded-xl overflow-hidden relative">

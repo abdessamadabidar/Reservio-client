@@ -4,7 +4,7 @@ import {columns} from "@/components/data table/columns/reservation-columns.tsx";
 import {Loader} from "@/components/custom/loader.tsx";
 
 export default function Reservations() {
-	const {AllReservations, allReservationsAreLoading} = useReservation()
+	const {AllReservations, allReservationsAreLoading} = useReservation({})
 
 
 	if(allReservationsAreLoading) {

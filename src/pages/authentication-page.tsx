@@ -23,7 +23,7 @@ export default function AuthenticationPage({form} : Props) {
 				</div>
 				<div className="col-span-3 hidden md:block">
 					<div className="w-full h-full">
-						<div className="hidden md:block bg-[url('src/assets/adrien-olichon-1aIwLqshekQ-unsplash.jpg')] h-full bg-no-repeat bg-center bg-cover"></div>
+						<div className="hidden md:block bg-[url('/src/assets/adrien-olichon-1aIwLqshekQ-unsplash.jpg')] h-full bg-no-repeat bg-center bg-cover"></div>
 					</div>
 				</div>
 			</div>

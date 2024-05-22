@@ -13,5 +13,8 @@ export default {
 	},
 	deleteNotification: async (notificationId: string) => {
 		return await axiosInstance.delete(`/Notification/${notificationId}`)
+	},
+	unreadNotificationsCount: async (userId: string) => {
+		return await axiosInstance.get(`/Notification/${userId}/unread/count`)
 	}
 }

@@ -9,10 +9,11 @@ export const useNotification = () => {
 
 	const {id} = useSelector((state: RootState) => state.userState)
 	const queryClient = useQueryClient();
-	const {data: notifications, isLoading} = useQuery({
+	const {data: notifications, isLoading: notificationsAreLoading} = useQuery({
 		queryKey: ["notifications"],
 		queryFn: async () => NotificationApi.fetchNotifications(id),
 		onSuccess: async (response) => {
+			queryClient.invalidateQueries("unreadNotificationsCount")
 			console.log('Notifications fetched successfully', response)
 		},
 		onError: (error) => {
@@ -73,11 +74,31 @@ export const useNotification = () => {
 	}) as INotification[];
 
 
+	const {data: unreadNotificationsCount} = useQuery({
+		queryKey: ["unreadNotificationsCount"],
+		queryFn: async () => NotificationApi.unreadNotificationsCount(id),
+		onSuccess: async (response) => {
+			console.log('Unread notifications count fetched successfully', response)
+		},
+		onError: (error) => {
+			console.log('Error fetching unread notifications count', error)
+		}
+	})
+
+	const countUnreadNotifications: number = unreadNotificationsCount?.data;
+
 
 
 	const markAsRead =  (notificationId: string) =>  MarkAsReadMutation(notificationId);
 	const markAsUnread =  (notificationId: string) =>  MarkAsUnreadMutation(notificationId);
 	const deleteNotification =  (notificationId: string) =>  DeleteNotificationMutation(notificationId);
 
-	return {notifications: Notifications, markAsRead, markAsUnread, deleteNotification, isLoading}
+	return {
+		notifications: Notifications,
+		markAsRead,
+		markAsUnread,
+		deleteNotification,
+		notificationsAreLoading,
+		countUnreadNotifications
+	}
 }
