@@ -53,6 +53,7 @@ const router = createBrowserRouter([
     {
         path: "/",
         element: <DefaultLayout />,
+        errorElement: <NotFoundPage />,
         children: [
             {
                 path: "notifications",
@@ -164,6 +165,7 @@ const router = createBrowserRouter([
     {
         path: "/admin",
         element: <DefaultLayout />,
+        errorElement: <NotFoundPage />,
         children: [
             {
                 path: "users",

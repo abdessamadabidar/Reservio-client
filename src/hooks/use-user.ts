@@ -2,9 +2,10 @@ import {useMutation, useQuery, useQueryClient} from "react-query";
 import UserApi from "@/API/user-api.ts";
 import {useNavigate} from "react-router-dom";
 import {IChangePasswordRequest, IReservation, IUser, IUserUpdateRequest} from "@/types/types.ts";
-import {useDispatch} from "react-redux";
-import {setEmail, setFirstName, setIsActivated, setLastName} from "@/state/slices/user-slice.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {isAdmin, setEmail, setFirstName, setIsActivated, setLastName} from "@/state/slices/user-slice.ts";
 import {useLogout} from "@/hooks/use-logout.ts";
+import {RootState} from "@/state/store.ts";
 
 
 
@@ -14,20 +15,25 @@ export const useUser = (userId?: string) => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
-
+	const {token} = useSelector((state: RootState) => state.userState);
 	const {logout} = useLogout();
-
+	const userIsAdmin = useSelector(isAdmin);
 
 
 	const {data: allUsers, isLoading: usersAreLoading} = useQuery({
 		queryKey: ["users"],
-		queryFn: async () => await UserApi.fetchAllUsers(),
+		queryFn: async () => await UserApi.fetchAllUsers(token),
 		onSuccess: (response) => {
 			console.log('All users', response)
+
 		},
 		onError: (error) => {
 			console.log('Error fetching all users', error)
-		}
+
+		},
+
+		enabled: userIsAdmin
+
 	})
 
 
@@ -47,8 +53,41 @@ export const useUser = (userId?: string) => {
 	}) as IUser[];
 
 
+
+	const {data: recentUsers} = useQuery({
+		queryKey: ["recentUsers"],
+		queryFn: async () => await UserApi.fetchRecentUsers(token),
+		onSuccess: (response) => {
+			console.log('Recent users', response)
+
+		},
+		onError: (error) => {
+			console.log('Error fetching recent users', error)
+
+		},
+		enabled: userIsAdmin
+
+	})
+
+	const RecentUsers: IUser[] = recentUsers?.data?.map((user) => {
+		return {
+			Id: user?.id,
+			FirstName: user?.firstName,
+			LastName: user?.lastName,
+			Email: user?.email,
+			IsActivated: user?.isActivated,
+			IsApproved: user?.isApproved,
+			CreatedAt: user?.createdAt,
+			UpdatedAt: user?.updatedAt,
+			VerifiedAt: user?.verifiedAt,
+		}
+
+	}) as IUser[];
+
+
+
 	const {mutateAsync: updateMutation} = useMutation({
-		mutationFn: async (user: IUserUpdateRequest) => await UserApi.updateUser(userId!, user),
+		mutationFn: async (user: IUserUpdateRequest) => await UserApi.updateUser(userId!, user, token),
 		onSuccess: async () => {
 			// Refetch the user data after the user is updated
 			await queryClient.invalidateQueries(["user", userId]);
@@ -64,7 +103,7 @@ export const useUser = (userId?: string) => {
 
 	const {data: fetchedUserData} = useQuery({
 		queryKey: ["user", userId],
-		queryFn: async () => await UserApi.fetchUser(userId!),
+		queryFn: async () => await UserApi.fetchUser(userId!, token),
 		onSuccess: (response) => {
 			dispatch(setFirstName(response.data.firstName))
 			dispatch(setLastName(response.data.lastName))
@@ -77,7 +116,7 @@ export const useUser = (userId?: string) => {
 
 
 	const {mutateAsync: changePasswordMutation} = useMutation({
-		mutationFn: async (passwordRequest: IChangePasswordRequest) => await UserApi.changePassword(userId!, passwordRequest),
+		mutationFn: async (passwordRequest: IChangePasswordRequest) => await UserApi.changePassword(userId!, passwordRequest, token),
 		onSuccess: async () => {
 			logout();
 		},
@@ -88,7 +127,7 @@ export const useUser = (userId?: string) => {
 
 
 	const {mutateAsync: enableAccountMutation}  = useMutation({
-		mutationFn: async () => await UserApi.enableAccount(userId!),
+		mutationFn: async () => await UserApi.enableAccount(userId!, token),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries(["users"]);
 			dispatch(setIsActivated(true))
@@ -101,7 +140,7 @@ export const useUser = (userId?: string) => {
 	})
 
 	const {mutateAsync: disableAccountMutation}  = useMutation({
-		mutationFn: async () => await UserApi.disableAccount(userId!),
+		mutationFn: async () => await UserApi.disableAccount(userId!, token),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries(["users"]);
 			dispatch(setIsActivated(false))
@@ -119,13 +158,14 @@ export const useUser = (userId?: string) => {
 
 	const {data: userReservations, isLoading: userReservationsAreLoading} = useQuery({
 		queryKey: ["userReservations", userId],
-		queryFn: async () => await UserApi.fetchUserReservations(userId!),
+		queryFn: async () => await UserApi.fetchUserReservations(userId!, token),
 		onSuccess: (response) => {
 			console.log('User reservations', response)
 		},
 		onError: (error) => {
 			console.log('Error fetching user reservations', error)
-		}
+		},
+		enabled: !!userId,
 	})
 
 
@@ -149,7 +189,7 @@ export const useUser = (userId?: string) => {
 
 
 	const {mutateAsync: deleteUserMutation} = useMutation({
-		mutationFn: async (Id: string) => await UserApi.deleteUser(Id!),
+		mutationFn: async (Id: string) => await UserApi.deleteUser(Id!, token),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries(["users"]);
 		},
@@ -160,6 +200,21 @@ export const useUser = (userId?: string) => {
 	});
 
 
+	const {mutateAsync: approveUserMutation} = useMutation({
+		mutationFn: async () => await UserApi.approveUser(userId!, token),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["users"]);
+		},
+		onError: (error) => {
+			console.log('Error approving user', error)
+		}
+	});
+
+
+
+
+	const usersCount = allUsers?.data?.length;
+	const usersRegisteredTodayCount = allUsers?.data.filter((user: { createdAt: string; }) => new Date(user.createdAt).toDateString() === new Date().toDateString()).length;
 
 
 
@@ -169,8 +224,24 @@ export const useUser = (userId?: string) => {
 	const enableAccount = async () => await enableAccountMutation();
 	const disableAccount = async () => await disableAccountMutation();
 	const deleteUser = async (Id: string) => await deleteUserMutation(Id);
+	const approveUser = async () => await approveUserMutation();
 
-	return {updateUser, changePassword, enableAccount, disableAccount,fetchedUserData, allUsers: Users, usersAreLoading, userReservations: UserReservations, userReservationsAreLoading, deleteUser}
+	return {
+		updateUser,
+		changePassword,
+		enableAccount,
+		disableAccount,
+		fetchedUserData,
+		allUsers: Users,
+		usersAreLoading,
+		userReservations: UserReservations,
+		userReservationsAreLoading,
+		deleteUser,
+		recentUsers: RecentUsers,
+		usersCount,
+		usersRegisteredTodayCount,
+		approveUser
+	}
 
 
 

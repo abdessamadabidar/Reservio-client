@@ -4,12 +4,12 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input.tsx";
 import {cn} from "@/lib/utils.ts";
 import {Button} from "@/components/ui/button.tsx";
-import {ResetPasswordSchema, passwordSchema} from "@/zod/password-schema.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {usePassword} from "@/hooks/use-password.ts";
 import {useForgotPassword} from "@/hooks/use-forgot-password.ts";
 import {toast} from "@/components/ui/use-toast.ts";
+import {ResetPasswordSchema, resetPasswordSchema} from "@/zod/reset-password-schema.ts";
 
 
 export default function ResetPasswordForm() {
@@ -17,11 +17,11 @@ export default function ResetPasswordForm() {
 
 	const location = useLocation();
 	const query = new URLSearchParams(location.search);
-	const token: string | null = query.get('token');
+	const token: string = query.get('token') as string
 
 
 	const resetPasswordForm = useForm<ResetPasswordSchema>({
-		resolver: zodResolver(passwordSchema),
+		resolver: zodResolver(resetPasswordSchema),
 		defaultValues: {
 			token: token
 		}
@@ -84,7 +84,7 @@ export default function ResetPasswordForm() {
 					<div className="space-y-4">
 						<FormField
 							control={resetPasswordForm.control}
-							name="password"
+							name="newPassword"
 							render={({ field }) => (
 								<FormItem className="flex-1">
 									<FormLabel>New password</FormLabel>
@@ -113,7 +113,7 @@ export default function ResetPasswordForm() {
 						/>
 						<FormField
 							control={resetPasswordForm.control}
-							name="passwordConfirmation"
+							name="newPasswordConfirmation"
 							render={({ field }) => (
 								<FormItem className="flex-1">
 									<FormLabel>Password confirmation</FormLabel>

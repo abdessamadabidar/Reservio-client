@@ -11,7 +11,7 @@ export const useRegistration = () => {
 	const {mutateAsync: registerMutation, isLoading } = useMutation({
 		mutationFn: async (user: UserSchema) => await AuthApi.signUp(user),
 		onSuccess: () => {
-			navigate("/auth");
+			navigate("/auth/login");
 		},
 		onError: (error) => {
 			console.log('react query on error', error);

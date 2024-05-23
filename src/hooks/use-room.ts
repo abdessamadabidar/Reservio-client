@@ -3,19 +3,25 @@ import {IEquipment, IRoom, IRoomAvailability, IRoomRequest, IRoomUpdateRequest} 
 import RoomApi from "@/API/room-api.ts";
 import {format} from "date-fns";
 import {useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
+import {RootState} from "@/state/store.ts";
 
 
 
 export const useRoom = (roomId?: string, date?: Date) => {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
+	const token = useSelector((state: RootState) => state.userState.token);
 
 
 	const {mutateAsync: insertRoomMutation} = useMutation({
 
-		mutationFn: async (room: IRoomRequest) => RoomApi.createRoom(room),
-		onSuccess: (response) => {
-			console.log('Room created successfully', response)
+		mutationFn: async (room: IRoomRequest) => RoomApi.createRoom(room, token),
+		onSuccess: async (response) => {
+			console.log(response)
+			await queryClient.invalidateQueries(['rooms'])
+			navigate("/rooms")
+
 		},
 
 		onError: (error) => {
@@ -28,10 +34,11 @@ export const useRoom = (roomId?: string, date?: Date) => {
 
 	const {data: rooms, isLoading:fetchRoomsIsLoading} = useQuery({
 		queryKey: ['rooms'],
-		queryFn: async () => await RoomApi.fetchAllRooms(),
+		queryFn: async () => await RoomApi.fetchAllRooms(token),
 
-		onSuccess: (response) => {
+		onSuccess: async (response) => {
 			console.log('Rooms fetched successfully', response)
+
 		},
 
 		onError: (error) => {
@@ -67,7 +74,7 @@ export const useRoom = (roomId?: string, date?: Date) => {
 
 	const {data: room, isLoading:fetchRoomIsLoading} = useQuery({
 		queryKey: ['room', roomId],
-		queryFn: async () => await RoomApi.getRoomById(roomId!),
+		queryFn: async () => await RoomApi.getRoomById(roomId!, token),
 		onSuccess: async (response) => {
 			console.log('Room fetched successfully', response)
 		},
@@ -102,7 +109,7 @@ export const useRoom = (roomId?: string, date?: Date) => {
 
 	// update room
 	const  {mutateAsync: updateRoomMutation} = useMutation({
-		mutationFn: async (updatedRoom: IRoomUpdateRequest) => await RoomApi.updateRoom(roomId!, updatedRoom),
+		mutationFn: async (updatedRoom: IRoomUpdateRequest) => await RoomApi.updateRoom(roomId!, updatedRoom, token),
 		onSuccess: async (response) => {
 			await queryClient.invalidateQueries(['room', roomId])
 
@@ -117,7 +124,7 @@ export const useRoom = (roomId?: string, date?: Date) => {
 
 
 	const {mutateAsync: deleteRoomMutation} = useMutation({
-		mutationFn: async (roomId: string) => await RoomApi.removeRoom(roomId),
+		mutationFn: async (roomId: string) => await RoomApi.removeRoom(roomId, token),
 		onSuccess: async (response) => {
 			await queryClient.invalidateQueries(['rooms'])
 			navigate("/rooms")
@@ -130,7 +137,7 @@ export const useRoom = (roomId?: string, date?: Date) => {
 
 	const {data: availabilities, isLoading: roomAvailabilitiesAreLoading} = useQuery({
 		queryKey: ['room-availabilities', date],
-		queryFn: async () => await RoomApi.fetchRoomAvailability(roomId!, date?.toLocaleDateString() || new Date().toLocaleDateString()),
+		queryFn: async () => await RoomApi.fetchRoomAvailability(roomId!, date?.toISOString() || new Date().toISOString(), token),
 		onSuccess: (response) => {
 			console.log('Room availabilities fetched successfully', response)
 		},
@@ -152,7 +159,7 @@ export const useRoom = (roomId?: string, date?: Date) => {
 
 	// update equipments
 	const {mutateAsync: updateEquipmentsMutation} = useMutation({
-		mutationFn: async (equipments: string[]) => await RoomApi.updateRoomEquipments(roomId!, equipments),
+		mutationFn: async (equipments: string[]) => await RoomApi.updateRoomEquipments(roomId!, equipments, token),
 		onSuccess: async (response) => {
 			await queryClient.invalidateQueries(['room', roomId])
 			console.log('Room equipments updated successfully', response)
@@ -164,6 +171,9 @@ export const useRoom = (roomId?: string, date?: Date) => {
 	});
 
 
+	const roomsCount = rooms?.data?.length;
+	const roomsAddedTodayCount = rooms?.data?.filter((room: { createdAt: string; }) => new Date(room?.createdAt).toDateString() === new Date().toDateString()).length;
+
 
 	const deleteRoom = async (roomId: string) => await deleteRoomMutation(roomId);
 	const insertRoom = async (room: IRoomRequest) => await insertRoomMutation(room);
@@ -171,6 +181,19 @@ export const useRoom = (roomId?: string, date?: Date) => {
 	const updateEquipments = async (equipments: string[]) => await updateEquipmentsMutation(equipments);
 
 
-	return {insertRoom, fetchRoomIsLoading, fetchRoomsIsLoading, roomAvailabilitiesAreLoading, rooms: Rooms, room: Room, deleteRoom, availabilities: Availabilities, updateRoom, updateEquipments}
+	return {
+		insertRoom,
+		fetchRoomIsLoading,
+		fetchRoomsIsLoading,
+		roomAvailabilitiesAreLoading,
+		rooms: Rooms,
+		room: Room,
+		deleteRoom,
+		availabilities: Availabilities,
+		updateRoom,
+		updateEquipments,
+		roomsCount,
+		roomsAddedTodayCount
+	}
 
 }

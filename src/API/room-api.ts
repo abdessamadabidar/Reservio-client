@@ -3,7 +3,7 @@ import {IRoomRequest, IRoomUpdateRequest} from "@/types/types.ts";
 
 
 export default {
-	createRoom : async (room: IRoomRequest) => {
+	createRoom : async (room: IRoomRequest, token: string) => {
 		try {
 
 			const form = new FormData();
@@ -13,7 +13,7 @@ export default {
 			form.append('Equipments', JSON.stringify(room.Equipments));
 			form.append('ImageFile', room.ImageFile!);
 			const response = await axiosInstance.post('/Room', form,
-				{headers: {'Content-Type': 'multipart/form-data'}})
+				{headers: {'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${token}`}})
 
 			return response.data;
 		}
@@ -24,29 +24,29 @@ export default {
 		}
 
 	},
-	fetchAllRooms : async () => {
-		return await axiosInstance.get('/Room')
+	fetchAllRooms : async (token: string) => {
+		return await axiosInstance.get('/Room', {headers: {'Authorization': `Bearer ${token}`}})
 	},
-	removeRoom: async (roomId: string) => {
-		return await axiosInstance.delete(`/Room/${roomId}`)
+	removeRoom: async (roomId: string, token: string) => {
+		return await axiosInstance.delete(`/Room/${roomId}`, {headers: {'Authorization': `Bearer ${token}`}})
 	},
-	getRoomById: async (roomId: string) => {
-		return await axiosInstance.get(`/Room/${roomId}`)
+	getRoomById: async (roomId: string, token: string) => {
+		return await axiosInstance.get(`/Room/${roomId}`, {headers: {'Authorization': `Bearer ${token}`}})
 	},
-	fetchRoomAvailability: async (roomId: string, date: string) => {
-		return await axiosInstance.get(`/Room/${roomId}/availabilities?date=${date}`)
+	fetchRoomAvailability: async (roomId: string, date: string, token: string) => {
+		return await axiosInstance.get(`/Room/${roomId}/availabilities?date=${date}`, {headers: {'Authorization': `Bearer ${token}`}})
 	},
-	updateRoom: async (roomId: string, room: IRoomUpdateRequest) => {
+	updateRoom: async (roomId: string, room: IRoomUpdateRequest, token: string) => {
 		const updateForm = new FormData();
 		updateForm.append('Id', room.Id);
 		updateForm.append('Name', room.Name);
 		updateForm.append('Capacity', room.Capacity.toString());
 		updateForm.append('Description', room.Description || '');
 		updateForm.append('ImageFile', room.ImageFile!);
-		return await axiosInstance.put(`/Room/${roomId}`, updateForm, {headers: {'Content-Type': 'multipart/form-data'}})
+		return await axiosInstance.put(`/Room/${roomId}`, updateForm, {headers: {'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${token}`}})
 	},
-	updateRoomEquipments: async (roomId: string, equipments: string[]) => {
-		return await axiosInstance.put(`/Room/${roomId}/equipments`, equipments)
+	updateRoomEquipments: async (roomId: string, equipments: string[], token: string) => {
+		return await axiosInstance.put(`/Room/${roomId}/equipments`, equipments, {headers: {'Authorization': `Bearer ${token}`}})
 	}
 
 }

@@ -31,7 +31,7 @@ export default function RoomCard({room}: IRoomProps) {
 				</div>
 
 			</div>
-			<div className="flex items-center flex-nowrap flex-wrap gap-2 5">
+			<div className="flex items-center flex-nowrap gap-2 5">
 				{room?.RoomEquipments?.[0] && <Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">{room?.RoomEquipments?.[0]?.Name}</Badge>}
 				{room?.RoomEquipments?.[1] && <Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">{room?.RoomEquipments?.[1]?.Name}</Badge>}
 				{room?.RoomEquipments?.length > 2 && <Badge variant="outline" className="text-muted-foreground text-xs font-normal whitespace-nowrap">+{room?.RoomEquipments?.length - 2}</Badge>}

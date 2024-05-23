@@ -30,10 +30,6 @@ export default function CreateRoomForm() {
 
 	const {equipments} = useEquipment();
 
-	useEffect(() => {
-		console.log(roomForm.formState.errors)
-	}, [roomForm.formState.errors])
-
 
 	const {insertRoom} = useRoom();
 
@@ -44,9 +40,14 @@ export default function CreateRoomForm() {
 			Name: Name,
 			Capacity: Capacity,
 			Description: Description,
-			Equipments: Equipments,
+			Equipments: [...Equipments],
 			ImageFile: ImageFile
 		}
+
+
+
+		console.log('submitting room', roomRequest)
+
 
 		insertRoom(roomRequest)
 			.then((response) => {
@@ -54,7 +55,7 @@ export default function CreateRoomForm() {
 					description: (
 						<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100 flex items-center gap-x-1.5">
 							<CircleCheckBig className="size-4" />
-							{response.data.toString()}
+							{response}
 						</div>
 					),
 					className: "bg-green-600 border-0 text-slate-100"
@@ -65,12 +66,13 @@ export default function CreateRoomForm() {
 					description: (
 						<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100 flex items-center gap-x-1.5">
 							<Ban className="size-4" />
-							{error.response?.data?.Room?.errors?.[0].errorMessage}
+							{error.response?.data?.Room?.errors[0]?.errorMessage}
 						</div>
 					),
 					variant: "destructive",
 					className: "dark:bg-red-600"
 				})
+
 			});
 
 
@@ -224,7 +226,7 @@ export default function CreateRoomForm() {
 
 					</div>
 					<div className="grid md:justify-end mt-5">
-						<Button type="submit" className="hover:bg-secondary rounded-lg">Create Room</Button>
+						<Button type="submit" className="hover:bg-secondary dark:text-white rounded-lg">Create Room</Button>
 					</div>
 				</form>
 			</Form>

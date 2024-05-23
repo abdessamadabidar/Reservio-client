@@ -2,7 +2,7 @@ import {EmailSchema} from "@/zod/email-schema.ts";
 import {useMutation} from "react-query";
 import AuthApi from "@/API/auth-api.ts";
 import {useNavigate} from "react-router-dom";
-import {PasswordSchema} from "@/zod/password-schema.ts";
+import {ResetPasswordSchema} from "@/zod/reset-password-schema.ts";
 
 
 export const useForgotPassword = () => {
@@ -14,7 +14,7 @@ export const useForgotPassword = () => {
 		mutationFn: async (email: EmailSchema) => await AuthApi.forgotPassword(email),
 		onSuccess: (response) => {
 			console.log(response.data)
-
+			navigate('/auth/email-sent')
 		},
 		onError: (error) => {
 			console.log('forgot password error', error)
@@ -23,10 +23,10 @@ export const useForgotPassword = () => {
 
 
 	const {mutateAsync: resetPasswordMutation} = useMutation({
-		mutationFn: (resetPasswordRequest: PasswordSchema) => AuthApi.resetPassword(resetPasswordRequest),
+		mutationFn: (resetPasswordRequest: ResetPasswordSchema) => AuthApi.resetPassword(resetPasswordRequest),
 		onSuccess: (response) => {
 			console.log(response.data)
-			navigate('/auth')
+			navigate('/auth/login')
 		},
 		onError: (error) => {
 			console.log('reset password error', error)
@@ -34,7 +34,7 @@ export const useForgotPassword = () => {
 	})
 
 	const sendForgotPasswordEmail = async (email: EmailSchema) => forgotPasswordMutation(email);
-	const resetPassword = async (resetPasswordRequest: PasswordSchema) => resetPasswordMutation(resetPasswordRequest);
+	const resetPassword = async (resetPasswordRequest: ResetPasswordSchema) => resetPasswordMutation(resetPasswordRequest);
 
 	return {sendForgotPasswordEmail, resetPassword, isLoading}
 }

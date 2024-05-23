@@ -2,19 +2,17 @@ import axiosInstance from "@/API/axios.ts";
 
 
 export default {
-	fetchNotifications: async (userId: string) => {
-		return await axiosInstance.get(`/User/${userId}/notifications`)
+	fetchNotifications: async (userId: string, token: string) => {
+		return await axiosInstance.get(`/User/${userId}/notifications`, {headers: {'Authorization': `Bearer ${token}`}})
 	},
-	markAsRead: async (notificationId: string) => {
-		return await axiosInstance.put(`/Notification/${notificationId}/read`)
+	markAsRead: async (notificationId: string, token: string) => {
+		return await axiosInstance.put(`/Notification/${notificationId}/read`, {headers: {'Authorization': `Bearer ${token}`}})
 	},
-	markAsUnread: async (notificationId: string) => {
-		return await axiosInstance.put(`/Notification/${notificationId}/unread`)
+	markAsUnread: async (notificationId: string, token: string) => {
+		return await axiosInstance.put(`/Notification/${notificationId}/unread`, {headers: {'Authorization': `Bearer ${token}`}})
 	},
-	deleteNotification: async (notificationId: string) => {
-		return await axiosInstance.delete(`/Notification/${notificationId}`)
+	deleteNotification: async (notificationId: string, token: string) => {
+		return await axiosInstance.delete(`/Notification/${notificationId}`, {headers: {'Authorization': `Bearer ${token}`}})
 	},
-	unreadNotificationsCount: async (userId: string) => {
-		return await axiosInstance.get(`/Notification/${userId}/unread/count`)
-	}
+
 }

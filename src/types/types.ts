@@ -71,7 +71,7 @@ export interface IRoomRequest {
 	Name: string;
 	Capacity: number;
 	Description?: string;
-	Equipments: IEquipment[];
+	Equipments: { Id: string, Name: string }[];
 	ImageFile: File | null;
 }
 

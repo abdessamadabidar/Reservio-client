@@ -16,6 +16,7 @@ interface IRoomAvailabilityProps {
 	endTime: string;
 	isAvailable: boolean;
 	roomId: string;
+
 }
 
 
@@ -56,7 +57,6 @@ export default function RoomAvailability({date, startTime, endTime, isAvailable,
 		<div className="grid md:grid-cols-3 gap-y-3 px-2 md:px-5 py-1">
 			<div className="md:col-span-2 flex items-center justify-between md:my-1 my-2 text-xl font-medium">
 				<span>{startTime}</span> <MoveRight /> <span>{endTime}</span>
-				{isAvailable && "hh"}
 			</div>
 			<div className="col-span-1 md:grid md:justify-end w-full">
 				<Button onClick={toggleOpen} disabled={!isAvailable} size="sm" className="rounded-full hover:bg-secondary w-full flex items-center gap-x-1.5 dark:text-white">

@@ -20,11 +20,10 @@ interface Props {
 
 export default function UserTableDropdown({user}: Props) {
 
-	const {enableAccount, disableAccount} = useUser(user.Id!);
+	const {enableAccount, disableAccount, approveUser} = useUser(user.Id!);
 
 	const [isOpen, setOpen] = useState<boolean>(false);
 	const toggleDialog = () => setOpen(!isOpen);
-
 
 
 	return <>
@@ -44,7 +43,7 @@ export default function UserTableDropdown({user}: Props) {
 						Reservations
 					</Link>
 				</DropdownMenuItem>
-				{!user?.IsApproved && <DropdownMenuItem className="flex items-center gap-x-1.5"><UserRoundCheck className="h-4 w-4"/>Approve</DropdownMenuItem>}
+				{!user?.IsApproved && <DropdownMenuItem className="flex items-center gap-x-1.5" onClick={approveUser}><UserRoundCheck className="h-4 w-4"/>Approve</DropdownMenuItem>}
 				{user?.IsActivated && <DropdownMenuItem onClick={disableAccount} className="flex items-center gap-x-1.5"><ShieldMinus className="h-4 w-4"  />Disable</DropdownMenuItem>}
 				{!user?.IsActivated && <DropdownMenuItem onClick={enableAccount} className="flex items-center gap-x-1.5"><ShieldCheck className="h-4 w-4"  />Enable</DropdownMenuItem>}
 				<DropdownMenuSeparator />

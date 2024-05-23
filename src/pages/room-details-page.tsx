@@ -77,7 +77,7 @@ export default function RoomDetailsPage() {
 										&& av.RoomId === roomId
 					).length === 0
 
-				return <RoomAvailability roomId={roomId} isAvailable={isAvailable} date={date!} key={index} {...availability} />
+				return <RoomAvailability roomId={roomId} isAvailable={isAvailable} date={date} key={index} {...availability} />
 			})}
 		</div>
 	</div>

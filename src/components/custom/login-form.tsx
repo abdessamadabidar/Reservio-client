@@ -47,7 +47,7 @@ export function LoginForm() {
 				description: (
 					<div className="font-sans whitespace-pre-wrap text-wrap text-slate-100 flex items-center gap-x-1.5">
 						<Ban className="size-4" />
-						{error.response.data.toString()}</div>
+						{error.response?.data?.Account?.errors[0]?.errorMessage}</div>
 				),
 				variant: "destructive",
 				className: "dark:bg-red-600"

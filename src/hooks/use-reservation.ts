@@ -1,6 +1,8 @@
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import ReservationApi from "@/API/reservation-api.ts";
 import {IReservation, IReservationRequest} from "@/types/types.ts";
+import {useSelector} from "react-redux";
+import {RootState} from "@/state/store.ts";
 
 
 interface Props {
@@ -11,7 +13,7 @@ interface Props {
 
 export const useReservation = ({reservationId} : Props = {}) => {
 
-
+	const {token} = useSelector((state: RootState) => state.userState);
 	const queryClient = useQueryClient();
 
 
@@ -56,7 +58,7 @@ export const useReservation = ({reservationId} : Props = {}) => {
 
 	const {data: allReservations, isLoading: allReservationsAreLoading} = useQuery({
 		queryKey: ["allReservations"],
-		queryFn: async () => await ReservationApi.fetchAllReservations(),
+		queryFn: async () => await ReservationApi.fetchAllReservations(token),
 		onSuccess: async (data) => {
 			console.log('all reservations', data)
 		},
@@ -92,7 +94,7 @@ export const useReservation = ({reservationId} : Props = {}) => {
 
 
 	const {mutateAsync: createReservation} = useMutation({
-		mutationFn: async (reservation: IReservationRequest) => await ReservationApi.createReservation(reservation),
+		mutationFn: async (reservation: IReservationRequest) => await ReservationApi.createReservation(reservation, token),
 		onSuccess: async (data) => {
 			await queryClient.invalidateQueries("room")
 			console.log('created reservation', data)
@@ -105,7 +107,7 @@ export const useReservation = ({reservationId} : Props = {}) => {
 
 
 	const {mutateAsync: deleteReservationMutation} = useMutation({
-		mutationFn: async (reservationId: string) => await ReservationApi.deleteReservation(reservationId),
+		mutationFn: async (reservationId: string) => await ReservationApi.deleteReservation(reservationId, token),
 		onSuccess: async (data) => {
 			await queryClient.invalidateQueries("userReservations")
 			console.log('updated reservation', data)
@@ -114,6 +116,11 @@ export const useReservation = ({reservationId} : Props = {}) => {
 			console.error('error occurred while updating reservation', error)
 		}
 	})
+
+
+	const reservationsCount = allReservations?.data?.length;
+	const reservationsCreatedTodayCount = allReservations?.data?.filter((reservation: { createdAt: string; }) => new Date(reservation.createdAt).toDateString() === new Date().toDateString()).length;
+
 
 
 	const createNewReservation = async (reservation: IReservationRequest) => createReservation(reservation);
@@ -125,7 +132,9 @@ export const useReservation = ({reservationId} : Props = {}) => {
 		AllReservations,
 		allReservationsAreLoading,
 		createNewReservation,
-		deleteReservation
+		deleteReservation,
+		reservationsCount,
+		reservationsCreatedTodayCount
 	}
 
 
